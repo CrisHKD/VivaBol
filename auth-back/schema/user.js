@@ -1,0 +1,62 @@
+const { generateAccessToken, generateRefreshToken } = require('../auth/generateTokens');
+const db = require('../lib/db');
+const bycript = require('bcrypt');
+const Sesion = require('../schema/sesion');
+const {getUserInfo} = require('../lib/getUserInfo');
+
+const UserModel = {
+    createUser: async (name,lastName,email,birthDate,country,gender, password, callback) => {
+        const hash = await bycript.hash(password, 10);
+        const sql = 'INSERT INTO usuarios (nombres, apellidos, email, fecha_nac, pais, genero,password) VALUES (?,?,?,?,?,?,?)'
+        db.query(sql,[name, lastName, email, birthDate, country, gender,hash],callback) ;
+    },
+
+    comparePassword: async (password, hash, callback) => {
+        try {
+            const match = await bycript.compare(password, hash);
+            console.log("Resultado de bcrypt.compare:", match);
+            
+            return callback(null, match); // 🔹 Usamos `return` para evitar múltiples ejecuciones
+        } catch (error) {
+            console.error("Error en bcrypt.compare:", error);
+            return callback(error, null);
+        }
+    },
+
+    isEmailExist: async (email, callback) => {
+        const sql = "SELECT COUNT(*) AS count FROM usuarios WHERE email = ?";
+        db.query(sql, [email], (error, results) => {
+            if (error) return callback(error, null);
+            const isRegistered = results[0].count > 0;
+            callback(null, isRegistered);
+        });
+    },
+
+    getUserByEmail: (email, callback) => {
+        const sql = "SELECT id, nombres, apellidos, email, password FROM usuarios WHERE email = ?";
+        db.query(sql, [email], (error, results) => {
+            if (error) return callback(error, null);
+            if (results.length === 0) return callback(null, null); // No encontró usuario
+            callback(null, results[0]); // Devuelve el usuario
+        });
+        
+    },
+
+    createAccessToken: function(user){
+        return generateAccessToken(getUserInfo(user));
+    },
+    createRefreshToken: function(user){
+        const refreshToken = generateRefreshToken(getUserInfo(user));
+        try {
+            Sesion.crearSesion(user.id, refreshToken, (error, result) => {
+                if (error) throw error;
+                console.log("Sesión creada correctamente");
+            });
+            return refreshToken;
+        } catch (error) {
+            console.log("Error al crear la sesión:", error);
+        }
+    }
+};
+
+module.exports = UserModel;
