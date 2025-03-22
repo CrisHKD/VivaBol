@@ -38,7 +38,7 @@ router.post('/', (req, res) => {
       });
     } catch (error) {
       res.status(400).json(jsonResponse(400,{
-        error: "Fields are required"
+        error: "Error al crear usuario"
       }));
     }
     

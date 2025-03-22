@@ -4,7 +4,7 @@ import DefaultLayout from "../layout/DefaultLayout";
 import { useState } from "react";
 import { API_URL } from "../auth/constants";
 import { AuthResponseError } from "../types/types";
-
+import ReCAPTCHA from "react-google-recaptcha";
 
 
 export default function Signup(){
@@ -56,6 +56,10 @@ export default function Signup(){
         }
     }
 
+    const onChangeCaptcha = () => {
+        console.log("Captcha value:");
+    }
+
     if(auth.isAuthenticated){
         return <Navigate to="/dashboard" />;
     }
@@ -105,6 +109,10 @@ export default function Signup(){
             </select>
 
             <label>Password</label>
+            <ReCAPTCHA
+                sitekey="6Lc6i_wqAAAAADn9mUgqMjnyTuzaArjzFO_zL9Lb"
+                onChange={onChangeCaptcha}
+            />,
             <input 
                 type="password" 
                 value={password} 
