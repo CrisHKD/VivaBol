@@ -16,7 +16,7 @@ export default function DefaultLayout({children}:DefaultLayoutProps){
                         </li>
                         <li>
                             <Link to="/signup">Signup</Link>
-                        </li>
+                        </li>   
                     </ul>
                 </nav>
             </header>

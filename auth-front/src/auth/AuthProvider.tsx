@@ -12,12 +12,14 @@ const AuthContext = createContext({
     saveUser: (userData: AuthResponse) => {},
     getRefreshToken: () => {},
     getUser: () => ({} as User | undefined),
+    signOut: () => {},
 });
 
 export function AuthProvider({children}: AuthProviderProps){
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [accessToken, setAccessToken] = useState<string>("");
     const [user, setUser] = useState<User>();
+    const [isLoading, setIsLoading] = useState(true);
     //const [refreshToken, setRefreshToken] = useState<string>("");
 
     useEffect(() => {
@@ -78,9 +80,17 @@ export function AuthProvider({children}: AuthProviderProps){
     async function checkAuth(){
         if(accessToken){
             //el usuario esta autenticado
+            const userInfo = await getUserInfo(accessToken);
+
+            if(userInfo){
+                saveSesionInfo(userInfo, accessToken, getRefreshToken()!);
+                setIsLoading(false);
+                return;
+            }
         }else{
             // el usuario no esta autenticado
             const token = getRefreshToken();
+            
             if(token){
                 //llamar a la api para renovar el token
                 const newAccessToken = await requestNewAccessToken(token);
@@ -88,10 +98,20 @@ export function AuthProvider({children}: AuthProviderProps){
                     const userInfo = await getUserInfo(newAccessToken);
                     if(userInfo){
                         saveSesionInfo(userInfo, newAccessToken, token);
+                        setIsLoading(false);
+                        return;
                     }
                 }
             }
         }
+        setIsLoading(false);
+    }
+
+    function signOut(){
+        setIsAuthenticated(false);
+        setAccessToken("");
+        setUser(undefined);
+        localStorage.removeItem("token");
     }
 
     function saveSesionInfo(userInfo: User, accessToken: string, refreshToken: string){
@@ -128,8 +148,10 @@ export function AuthProvider({children}: AuthProviderProps){
                 getAccessToken,
                 saveUser,
                 getRefreshToken,
-                getUser}}>
-            {children}
+                getUser,
+                signOut,
+            }}>
+            {isLoading? <div>Loading...</div>: children}
         </AuthContext.Provider>
     );
 }

@@ -1,6 +1,13 @@
 import { useAuth } from "../auth/AuthProvider"
+import PortalLayout from "../layout/PortalLayout";
 
 export default function Dashboard(){
     const auth = useAuth();
-    return <h1>Dashboard de {auth.getUser()?.name || ""}</h1>
+    return (
+        <PortalLayout>
+            <h1>
+                Dashboard de {auth.getUser()?.name || ""}
+            </h1>
+        </PortalLayout>
+    );
 }

@@ -26,6 +26,26 @@ const Sesiones = {
                 resolve(results[0]); // Devuelve la primera sesión encontrada
             });
         });
+    },
+    eliminarSesion: (token) => {
+        return new Promise((resolve, reject) => {
+            const sql = 'DELETE FROM sesiones WHERE token = ?';
+            
+            db.query(sql, [token], (error, result) => {
+                if (error) {
+                    console.error("Error al eliminar la sesión:", error);
+                    return reject(error);
+                }
+
+                if (result.affectedRows === 0) {
+                    console.log("No se encontró ninguna sesión para eliminar.");
+                    return resolve(false);
+                }
+
+                console.log("Sesión eliminada correctamente.");
+                resolve(true);
+            });
+        });
     }
 }
 
