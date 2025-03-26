@@ -32,6 +32,11 @@ const UserModel = {
         });
     },
 
+    setVerify: (email, callback) => {
+        const sql = 'UPDATE usuarios SET verificado = true WHERE email = ?';
+        db.query(sql, [email], callback);
+    },
+
     getUserByEmail: (email, callback) => {
         const sql = "SELECT id, nombres, apellidos, email, password FROM usuarios WHERE email = ?";
         db.query(sql, [email], (error, results) => {

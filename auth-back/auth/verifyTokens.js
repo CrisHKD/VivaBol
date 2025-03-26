@@ -8,4 +8,8 @@ function verifyRefreshToken(token){
     return jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
 }
 
-module.exports = {verifyAccessToken, verifyRefreshToken};
+function verifyEmailVerification(token){
+    return jwt.verify(token, process.env.EMAIL_VERIFICATION_SECRET);
+}
+
+module.exports = {verifyAccessToken, verifyRefreshToken, verifyEmailVerification};

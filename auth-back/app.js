@@ -38,6 +38,8 @@ app.use('/api/login', require('./routes/login'));
 app.use('/api/refresh-token', require('./routes/refreshToken'));
 app.use('/api/todos',authenticate, require('./routes/todos'));
 app.use('/api/user',authenticate, require('./routes/user'));
+app.use('/api/verify', require('./routes/verifyEmail'));
+
 
 app.get('/', (req, res) => {
   res.send('Hello World!');

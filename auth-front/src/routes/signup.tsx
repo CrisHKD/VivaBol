@@ -6,16 +6,18 @@ import { API_URL } from "../auth/constants";
 import { AuthResponseError } from "../types/types";
 import ReCAPTCHA from "react-google-recaptcha";
 
+import Select from "react-select";
+import countries from "world-countries";
 
 export default function Signup(){
-
     const [name, setName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [birthDate, setBirthDate] = useState('');
     const [gender, setGender] = useState('');
-    const [country, setCountry] = useState('');
+    const [country, setCountry] = useState<string>("");
     const [password, setPassword] = useState('');
+
 
     const [errorResponse, setErrorResponse] = useState('');
 
@@ -56,6 +58,18 @@ export default function Signup(){
         }
     }
 
+    // Definir la estructura del país
+    interface CountryOption {
+        value: string;
+        label: string;
+    }
+    
+    // Formatear los países para el select
+    const formattedCountries: CountryOption[] = countries.map((country) => ({
+        value: country.cca2, // Código del país (ej. "US", "MX")
+        label: country.name.common, // Nombre del país (ej. "United States", "México")
+    }));
+
     const onChangeCaptcha = () => {
         console.log("Captcha value:");
     }
@@ -86,10 +100,12 @@ export default function Signup(){
                 value={email} 
                 onChange={(e) => setEmail(e.target.value)}/>
             <label >Pais</label>
-            <input 
-                type="text" 
-                value={country} 
-                onChange={(e) => setCountry(e.target.value)}/>
+            <Select
+                options={formattedCountries}
+                value={formattedCountries.find((c) => c.value === country) || null} // Para mostrar el valor correcto
+                onChange={(selectedOption) => setCountry(selectedOption?.value || "")} // Guardar el código del país
+                placeholder="Seleccione un país"
+            />
             <label >Fecha de nacimiento</label>
             <input 
                 type="date" 
@@ -108,11 +124,11 @@ export default function Signup(){
                 <option value="Prefer not to say">Prefiero no decirlo</option>
             </select>
 
-            <label>Password</label>
             <ReCAPTCHA
                 sitekey="6Lc6i_wqAAAAADn9mUgqMjnyTuzaArjzFO_zL9Lb"
                 onChange={onChangeCaptcha}
             />,
+            <label>Password</label>
             <input 
                 type="password" 
                 value={password} 
