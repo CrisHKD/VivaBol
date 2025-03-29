@@ -8,6 +8,7 @@ import Signup from './routes/signup.tsx';
 import Dashboard from './routes/Dashboard.tsx';
 import ProtectedRoute from './routes/ProtectedRoute.tsx';
 import { AuthProvider } from './auth/AuthProvider.tsx';
+import Index from './routes/Index.tsx';
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,16 @@ const router = createBrowserRouter([
       {
       path: '/dashboard',
       element: <Dashboard/>,
+      }
+    ]
+  },
+  {
+    path: '/',
+    element: <ProtectedRoute/>,
+    children:[
+      {
+      path: '/index',
+      element: <Index/>,
       }
     ]
   }

@@ -46,7 +46,6 @@ router.post('/', (req, res) => {
           }
           
           const token = generateEmailVerificationToken({name,lastName,email});
-          
 
           sendVerificationMail(email, token);
 
