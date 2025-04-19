@@ -1,7 +1,7 @@
 import { AuthResponseError, AuthResponse } from "../types/types";
 import { Navigate, useNavigate } from "react-router-dom";
 import {useAuth} from "../auth/AuthProvider";
-import DefaultLayout from "../layout/DefaultLayout";
+import DefaultHeader from "../layout/HeaderDefault";
 import { useState } from "react";
 import { API_URL } from "../auth/constants";
 
@@ -53,7 +53,7 @@ export default function Login(){
     }
 
     return (
-    <DefaultLayout>
+    <DefaultHeader>
         <form className="form" onSubmit={handleSubmit}>
             <h1>login</h1>
             {!!errorResponse && <div className="errorMessage">{errorResponse}</div>}
@@ -70,6 +70,6 @@ export default function Login(){
                 onChange={(e) => setPassword(e.target.value)}/>
             <button>login</button>
         </form>
-    </DefaultLayout>
+    </DefaultHeader>
     );
 }

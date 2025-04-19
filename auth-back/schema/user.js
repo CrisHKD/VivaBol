@@ -6,9 +6,21 @@ const {getUserInfo} = require('../lib/getUserInfo');
 
 const UserModel = {
     createUser: async (name,lastName,email,birthDate,country,gender, password, callback) => {
+
+        //Agregar usuario a la base de datos
         const hash = await bycript.hash(password, 10);
         const sql = 'INSERT INTO usuarios (nombres, apellidos, email, fecha_nac, pais, genero,password) VALUES (?,?,?,?,?,?,?)'
         db.query(sql,[name, lastName, email, birthDate, country, gender,hash],callback) ;
+
+        //Agregarle el rol por default de usuario
+        /*this.getUserByEmail(email, (err, user) => {
+              const id_user = user.id;
+              const id_rol = 7;
+              const sql2 = 'INSERT INTO usuario_roles (id_user, id_rol) VALUES (?,?)'
+              db.query(sql,[id_user,id_rol],callback) ;
+          });*/
+
+        
     },
 
     comparePassword: async (password, hash, callback) => {
@@ -44,7 +56,6 @@ const UserModel = {
             if (results.length === 0) return callback(null, null); // No encontró usuario
             callback(null, results[0]); // Devuelve el usuario
         });
-        
     },
 
     createAccessToken: function(user){

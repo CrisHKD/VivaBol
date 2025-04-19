@@ -8,6 +8,7 @@ const router = require('express').Router();
 
 router.post('/', async (req, res) => {
   const refreshToken = getTokenFromHeader(req.headers);
+  
 
   if (refreshToken) {
     try {

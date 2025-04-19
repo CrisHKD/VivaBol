@@ -6,6 +6,9 @@ import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import Login from './routes/Login.tsx';
 import Signup from './routes/signup.tsx';
 import Dashboard from './routes/Dashboard.tsx';
+import Eventos from './routes/Eventos.tsx';
+import Historia from './routes/Historia.tsx';
+import Calendario from './routes/Calendario.tsx';
 import ProtectedRoute from './routes/ProtectedRoute.tsx';
 import { AuthProvider } from './auth/AuthProvider.tsx';
 import Index from './routes/Index.tsx';
@@ -18,6 +21,18 @@ const router = createBrowserRouter([
   {
     path: '/signup',
     element: <Signup/>,
+  },
+  {
+    path: '/eventos',
+    element: <Eventos/>,
+  },
+  {
+    path: '/historia',
+    element: <Historia/>,
+  },
+  {
+    path: '/calendario',
+    element: <Calendario/>,
   },
   {
     path: '/',

@@ -13,7 +13,18 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 
-const pages = ['Products', 'Pricing', 'Blog'];
+import { useAuth } from "../auth/AuthProvider";
+import { Link } from "react-router-dom";
+import { API_URL } from "../auth/constants";
+import { logoPath } from "../auth/constants";
+
+
+//IMPORTAR EL TEMA
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import theme from '../layout/DefaultTheme';
+
+const pages = ['Eventos', 'Calendario', 'Historia y cultura', 'Galeria'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 interface DefaultLayoutProps {
@@ -21,6 +32,8 @@ interface DefaultLayoutProps {
 }
 
 export default function DefaultHeader({ children }: DefaultLayoutProps) {
+  const auth = useAuth();
+
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -39,12 +52,34 @@ export default function DefaultHeader({ children }: DefaultLayoutProps) {
     setAnchorElUser(null);
   };
 
+  async function handleSignOut(e: React.MouseEvent<HTMLAnchorElement>){
+          e.preventDefault();
+  
+          try {
+              const response = await fetch(`${API_URL}/signout`,{
+                  method: 'DELETE',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      Autorization: `Bearer ${auth.getRefreshToken()}`
+                  },
+              });
+  
+              if(response.ok){
+                  auth.signOut();
+              }
+          } catch (error) {
+              console.log(error);
+          }
+    }
+
   return (
     <>
-      <AppBar position="static">
+    <ThemeProvider theme={theme}>
+    <CssBaseline />
+      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
-            <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+            <img src={logoPath} alt="VivaBol Logo" style={{ width: '40px', height: 'auto', marginRight: '10px' }} />
             <Typography
               variant="h6"
               noWrap
@@ -60,7 +95,7 @@ export default function DefaultHeader({ children }: DefaultLayoutProps) {
                 textDecoration: 'none',
               }}
             >
-              LOGO
+              VIVABOL
             </Typography>
 
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -114,18 +149,34 @@ export default function DefaultHeader({ children }: DefaultLayoutProps) {
                 textDecoration: 'none',
               }}
             >
-              LOGO
+              VIVABOL
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-              {pages.map((page) => (
-                <Button
-                  key={page}
-                  onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: 'white', display: 'block' }}
-                >
-                  {page}
-                </Button>
-              ))}
+            {pages.map((page) => (
+              <Button
+                key={page}
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                {/* Cambia esto */}
+                {page === 'Eventos' ? (
+                  <Link to="/eventos" style={{ textDecoration: 'none', color: 'inherit' }}>
+                    {page}
+                  </Link>
+                ) : page === 'Historia y cultura' ? (
+                  <Link to="/historia" style={{ textDecoration: 'none', color: 'inherit' }}>
+                    {page}
+                  </Link>
+                ) : page === 'Calendario' ? (
+                  <Link to="/calendario" style={{ textDecoration: 'none', color: 'inherit' }}>
+                    {page}
+                  </Link>
+                ) :(
+                  page
+                )}
+                
+              </Button>
+            ))}
             </Box>
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
@@ -155,11 +206,15 @@ export default function DefaultHeader({ children }: DefaultLayoutProps) {
                   </MenuItem>
                 ))}
               </Menu>
+              <li>
+                            <a href="#" onClick={handleSignOut}>Sign out</a>
+                        </li>
             </Box>
           </Toolbar>
         </Container>
       </AppBar>
       <main>{children}</main>
+      </ThemeProvider>
     </>
   );
 }

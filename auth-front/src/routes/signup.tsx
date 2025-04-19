@@ -1,39 +1,34 @@
+import * as React from 'react';
 import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
-import DefaultLayout from "../layout/DefaultLayout";
+
 import { useState } from "react";
 import { API_URL } from "../auth/constants";
 import { AuthResponseError } from "../types/types";
 import ReCAPTCHA from "react-google-recaptcha";
 import DefaultHeader from "../layout/HeaderDefault";
 
+import theme from '../layout/DefaultTheme';
+
 import "@fontsource/roboto/400.css";
 import {
     Select as MuiSelect, MenuItem, InputLabel, FormControl, Card, CardContent
     , Button, TextField, Box, Autocomplete, Typography
 } from "@mui/material";
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider, } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 
 import countries from "world-countries";
 
-const theme = createTheme({
-    palette: {
-        mode: "dark", // Cambia a "light" para un tema claro
-        primary: {
-            main: "#1976d2", // Color principal
-        },
-        secondary: {
-            main: "#dc004e", // Color secundario
-        },
-    },
-    typography: {
-        fontFamily: "Arial, sans-serif", // Cambia la tipografía
-    },
-});
-
 export default function Signup() {
+
+
     const [name, setName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -45,10 +40,18 @@ export default function Signup() {
 
     const [errorResponse, setErrorResponse] = useState('');
 
+    const [showPassword, setShowPassword] = React.useState(false);
+        const handleClickShowPassword = () => setShowPassword((show) => !show);
+        const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+            event.preventDefault();
+          };
+        
+
     const auth = useAuth();
     const goTo = useNavigate();
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        
         e.preventDefault();
 
         try {
@@ -106,65 +109,83 @@ export default function Signup() {
     return (
         <>
         <DefaultHeader>
-            <ThemeProvider theme={theme}>
-                <CssBaseline /> {/* Aplica estilos globales según el tema */}
                 <Card variant="outlined">
                     <CardContent>
+                        <Box 
+                                        sx={{
+                        
+                                            width: '100%',
+                                            justifyContent: 'center', // Centrado horizontal
+                                            padding: '36px',          // Espaciado alrededor de los componentes
+                                        }}
+                                    />
                         <Box
                             component="form"
                             sx={{
                                 display: "flex",
+                                gap: 0,
                                 flexDirection: "column", // Para que los elementos estén en columna
                                 alignItems: "center", // Centra horizontalmente
                                 justifyContent: "center", // Centra verticalmente (si el padre tiene altura suficiente)
-                                '& > :not(style)': { m: 1, width: '35ch' }
+                                '& > :not(style)': { m: 1, width: '40ch' },
                             }}
                             noValidate
                             autoComplete="off"
                             onSubmit={handleSubmit} // Asegúrate de agregar este prop
                         >
-                            <Typography variant="h5" component="div">
+                            <Typography variant="h4" component="div">
                                 Registrarse
                             </Typography>
                             {!!errorResponse && <div className="errorMessage">{errorResponse}</div>}
 
                             <Box sx={{ display: "flex", gap: 2 }}> {/* Establece display: flex y un espacio entre los campos */}
                                 <TextField
-                                    id="outlined-basic"
+                                    //id="outlined-basic"
                                     label="Nombres"
                                     variant="outlined"
-                                    sx={{ "& .MuiInputBase-input": { padding: "20px" } }}
+                                    sx={{ "& .MuiInputBase-input": {  padding: "15px" } }}
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     fullWidth // Esto asegura que los campos ocupen el mismo tamaño
                                 />
                                 <TextField
-                                    id="outlined-basic"
+                                    //id="outlined-basic"
                                     label="Apellidos"
                                     variant="outlined"
-                                    sx={{ "& .MuiInputBase-input": { padding: "19px" } }}
+                                    sx={{ "& .MuiInputBase-input": { padding: "15px" } }}
                                     value={lastName}
                                     onChange={(e) => setLastName(e.target.value)}
                                     fullWidth // Esto asegura que los campos ocupen el mismo tamaño
                                 />
                             </Box>
                             <TextField
-                                id="outlined-basic"
+                                //id="outlined-basic"
                                 label="Correo eletronico"
                                 variant="outlined"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                sx={{ "& .MuiInputBase-input": { padding: "19px" } }}
+                                sx={{ "& .MuiInputBase-input": {  padding: "15px"  } }}
                             />
                             
-                            <Autocomplete
-                                disablePortal
-                                options={formattedCountries}
-                                value={formattedCountries.find((c) => c.value === country) || null} // Asegúrate de que sea el objeto completo
-                                onChange={(_, selectedOption) => setCountry(selectedOption?.value || "")} // Guarda solo el código del país
-                                sx={{ width: 300 }}
-                                renderInput={(params) => <TextField {...params} label="Pais" />}
-                            />
+                            <Box sx={{ display: "flex", gap: 2 }}>
+                                <Autocomplete
+                                    disablePortal
+                                    options={formattedCountries}
+                                    value={formattedCountries.find((c) => c.value === country) || null} // Asegúrate de que sea el objeto completo
+                                    onChange={(_, selectedOption) => setCountry(selectedOption?.value || "")} // Guarda solo el código del país
+                                    sx={{ width: 300,}}
+                                    renderInput={(params) => <TextField {...params} label="Pais" />}
+                                />
+                                <FormControl fullWidth>
+                                    <InputLabel id="gender-select-label">Género</InputLabel>
+                                    <MuiSelect labelId="gender-select-label" value={gender} onChange={(e) => setGender(e.target.value)} label="Género" >
+                                        <MenuItem value="Male">Masculino</MenuItem>
+                                        <MenuItem value="Female">Femenino</MenuItem>
+                                        <MenuItem value="Other">Otro</MenuItem>
+                                        <MenuItem value="Prefer not to say">Prefiero no decirlo</MenuItem>
+                                    </MuiSelect>
+                                </FormControl>
+                            </Box>
                             <TextField
                                 label="Fecha de nacimiento"
                                 type="date"
@@ -175,35 +196,48 @@ export default function Signup() {
                                 }}
                                 sx={{ width: 300 }} // Ajusta el ancho si es necesario
                             />
-                            <FormControl fullWidth>
-                                <InputLabel id="gender-select-label">Género</InputLabel>
-                                <MuiSelect labelId="gender-select-label" value={gender} onChange={(e) => setGender(e.target.value)} label="Género" >
-                                    <MenuItem value="Male">Masculino</MenuItem>
-                                    <MenuItem value="Female">Femenino</MenuItem>
-                                    <MenuItem value="Other">Otro</MenuItem>
-                                    <MenuItem value="Prefer not to say">Prefiero no decirlo</MenuItem>
-                                </MuiSelect>
-                            </FormControl>
-
                             <ReCAPTCHA
                                 sitekey="6Lc6i_wqAAAAADn9mUgqMjnyTuzaArjzFO_zL9Lb"
                                 onChange={onChangeCaptcha}
                             />
+
                             <TextField
                                 label="Contraseña"
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 variant="outlined" // Puedes elegir entre "outlined", "filled", "standard"
-                                sx={{ width: 300 }} // Ajusta el ancho si es necesario
+                                sx={{ width: 300}} // Ajusta el ancho si es necesario
                             />
-
+                            
+                            <FormControl sx={{ m: 1}} variant="outlined">
+                                <InputLabel htmlFor="outlined-adornment-password">Contraseña</InputLabel>
+                                <OutlinedInput
+                                    id="outlined-adornment-password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                        aria-label={
+                                            showPassword ? 'hide the password' : 'display the password'
+                                        }
+                                        onClick={handleClickShowPassword}
+                                        onMouseDown={handleMouseDownPassword}
+                                        edge="end"
+                                        >
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                    }
+                                    
+                                    label="Contraseña"
+                                />
+                                </FormControl>
                             <Button variant="contained" color="success" type="submit">Registrarse</Button>
                         </Box>
                     </CardContent>
 
                 </Card>
-            </ThemeProvider>
         </DefaultHeader>
         </>
     );
