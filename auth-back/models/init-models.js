@@ -21,6 +21,7 @@ var _roles = require("./roles");
 var _sesiones = require("./sesiones");
 var _usuarios = require("./usuarios");
 var _verificacion_cuentas = require("./verificacion_cuentas");
+const sequelize = require('../lib/database');
 
 function initModels(sequelize) {
   var batallas = _batallas(sequelize, DataTypes);
@@ -118,6 +119,10 @@ function initModels(sequelize) {
     verificacion_cuentas,
   };
 }
-module.exports = initModels;
-module.exports.initModels = initModels;
-module.exports.default = initModels;
+
+const models =initModels(sequelize);
+
+module.exports = {
+  sequelize,    // Exporta la instancia de sequelize
+  models,   // Exporta la función de inicialización de modelos
+};
