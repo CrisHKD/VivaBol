@@ -29,10 +29,19 @@ const drawerWidth = 200;
 
 export default function Dashboard() {
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
-  const [open, setOpen] = React.useState(true);
+  
+  const [open, setOpen] = React.useState(false);
+  const [openAc, setOpenAc] = React.useState(false);
+  const [openOrg, setOpenOrg] = React.useState(false);
 
   const handleClick = () => {
     setOpen(!open);
+  };
+  const handleClickAc = () => {
+    setOpenAc(!openAc);
+  };
+  const handleClickOrg = () => {
+    setOpenOrg(!openOrg);
   };
 
   const handleItemClick = (item: string) => {
@@ -74,6 +83,37 @@ export default function Dashboard() {
         return <Typography variant="h6">Información sobre Historia</Typography>;
       case 'Personajes':
         return <Typography variant="h6">Información sobre Personajes</Typography>;
+      case 'Academicos':
+        return <>
+        <Box 
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'right', // Centrado horizontal
+                    alignItems: 'center',     // Centrado vertical
+                    gap: '20px',              // Espacio entre los componentes
+                    flexWrap: 'wrap',         // Para que se ajusten en pantallas pequeñas
+                    padding: '20px',
+                    paddingTop: '64px',
+                    paddingRight:'5px'           // Espaciado alrededor de los componentes
+                }}
+            >
+                <DepatamentoSelect/>
+                <SearchComponent/>
+            </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center',}}>
+          <TableEventos />
+        </Box>
+        </>;
+      case 'Literarios':
+        return <Typography variant="h6">Información sobre Eventos literarios</Typography>;
+      case 'Ferias':
+        return <Typography variant="h6">Información sobre Ferias</Typography>;
+      case 'Gastronomicos':
+        return <Typography variant="h6">Información sobre Gastronomicos</Typography>;
+      case 'Sociales':
+        return <Typography variant="h6">Información sobre Sociales</Typography>;
+      case 'Deportivos':
+        return <Typography variant="h6">Información sobre Deportivos</Typography>;
       default:
         return <Typography variant="h6">Selecciona un ítem de la lista</Typography>;
     };
@@ -119,7 +159,7 @@ export default function Dashboard() {
         <ListItemIcon>
           <InboxIcon />
         </ListItemIcon>
-        <ListItemText primary="Usuario cultiral" />
+        <ListItemText primary="Cultural" />
         {open ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
       <Collapse in={open} timeout="auto" unmountOnExit>
@@ -170,7 +210,7 @@ export default function Dashboard() {
         </List>
       </Collapse>
 
-        <ListItemButton onClick={handleClick}>
+        <ListItemButton onClick={handleClickAc}>
           <ListItemIcon>
             <InboxIcon />
           </ListItemIcon>
@@ -178,23 +218,83 @@ export default function Dashboard() {
           {open ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
 
-      <Collapse in={open} timeout="auto" unmountOnExit>
+      <Collapse in={openAc} timeout="auto" unmountOnExit>
+
         <List component="div" disablePadding>
-          <ListItemButton sx={{ pl: 4 }}>
+          <ListItemButton sx={{ pl: 4 }} onClick={() => handleItemClick('Academicos')}>
             <ListItemIcon>
               <StarBorder />
             </ListItemIcon>
-            <ListItemText primary="Starred2" />
+            <ListItemText primary="Eventos Academicos" />
           </ListItemButton>
         </List>
+
+        <List component="div" disablePadding>
+          <ListItemButton sx={{ pl: 4 }} onClick={() => handleItemClick('Literarios')}>
+            <ListItemIcon>
+              <StarBorder />
+            </ListItemIcon>
+            <ListItemText primary="Eventos Literarios" />
+          </ListItemButton>
+        </List>
+
       </Collapse>
 
+      <ListItemButton onClick={handleClickOrg}>
+          <ListItemIcon>
+            <InboxIcon />
+          </ListItemIcon>
+          <ListItemText primary="Organizador" />
+          {open ? <ExpandLess /> : <ExpandMore />}
+      </ListItemButton>
+      
+      <Collapse in={openOrg} timeout="auto" unmountOnExit>
+
+        <List component="div" disablePadding>
+          <ListItemButton sx={{ pl: 4 }} onClick={() => handleItemClick('Ferias')}>
+            <ListItemIcon>
+              <StarBorder />
+            </ListItemIcon>
+            <ListItemText primary="Ferias" />
+          </ListItemButton>
+        </List>
+
+        <List component="div" disablePadding>
+          <ListItemButton sx={{ pl: 4 }}  onClick={() => handleItemClick('Gastronomicos')}>
+            <ListItemIcon>
+              <StarBorder />
+            </ListItemIcon>
+            <ListItemText primary="Eventos Gastronomicos" />
+          </ListItemButton>
+        </List>
+
+        <List component="div" disablePadding>
+          <ListItemButton sx={{ pl: 4 }}  onClick={() => handleItemClick('Sociales')}>
+            <ListItemIcon>
+              <StarBorder />
+            </ListItemIcon>
+            <ListItemText primary="Eventos Sociales" />
+          </ListItemButton>
+        </List>
+
+        <List component="div" disablePadding>
+          <ListItemButton sx={{ pl: 4 }}  onClick={() => handleItemClick('Deportivos')}>
+            <ListItemIcon>
+              <StarBorder />
+            </ListItemIcon>
+            <ListItemText primary="Eventos deportivos" />
+          </ListItemButton>
+        </List>
+
+      </Collapse>
+        
     </List>
         </Box>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        {renderContent()}
-        
+      
+
+      <Box component="main" sx={{ flexGrow: 1, p: 3 , paddingTop: '64px'}}>
+        {renderContent()} 
       </Box>
     </Box>
     </DefaultHeader>

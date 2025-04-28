@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Box, Typography, Grid, IconButton } from '@mui/material';
 import { Facebook, Instagram, YouTube, Pinterest, LinkedIn } from '@mui/icons-material';
 import theme from '../layout/DefaultTheme';
@@ -22,7 +22,7 @@ const Footer = () => { // Remover React.FC
     > 
       <Grid container spacing={4} sx={{ justifyContent: 'center' }}>
         {/* Columna 1: Vivabol */}
-        <Grid item md={4} sx={{ textAlign: 'left' }}>
+        <Grid  sx={{ textAlign: 'left' }}>
           <Typography variant="h5" sx={{ fontWeight: 700, marginBottom: '10px' }}>
             Vivabol
           </Typography>
@@ -33,7 +33,7 @@ const Footer = () => { // Remover React.FC
         </Grid>
 
         {/* Columna 2: Iconos de redes sociales */}
-        <Grid item xs={12} md={4} sx={{ textAlign: 'center' }}>
+        <Grid sx={{ textAlign: 'center' }}>
           <Typography variant="h6" sx={{ marginBottom: '10px' }}>
             Síguenos
           </Typography>
@@ -87,7 +87,7 @@ const Footer = () => { // Remover React.FC
         </Grid>
 
         {/* Columna 3: Información de contacto */}
-        <Grid item xs={12} md={4} sx={{ textAlign: 'center' }}>
+        <Grid  sx={{ textAlign: 'center' }}>
           <Typography variant="h6" sx={{ marginBottom: '10px' }}>
             Contacto
           </Typography>

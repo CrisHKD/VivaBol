@@ -1,10 +1,11 @@
 function getUserInfo(user) {
   return {
+    rol: user.rol_id,
     email: user.email,
     name: user.nombres,
     lastName: user.apellidos,
     country: user.pais,
-    id: user.id  
+    ident:user.id,
   };
 };
 

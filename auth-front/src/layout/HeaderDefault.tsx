@@ -25,7 +25,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import theme from '../layout/DefaultTheme';
 
 const pages = ['Eventos', 'Calendario', 'Historia y cultura', 'Galeria'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 interface DefaultLayoutProps {
   children: React.ReactNode;
@@ -33,6 +32,8 @@ interface DefaultLayoutProps {
 
 export default function DefaultHeader({ children }: DefaultLayoutProps) {
   const auth = useAuth();
+  const user = auth.getUser?.();
+
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -52,168 +53,208 @@ export default function DefaultHeader({ children }: DefaultLayoutProps) {
     setAnchorElUser(null);
   };
 
-  async function handleSignOut(e: React.MouseEvent<HTMLAnchorElement>){
-          e.preventDefault();
-  
-          try {
-              const response = await fetch(`${API_URL}/signout`,{
-                  method: 'DELETE',
-                  headers: {
-                      'Content-Type': 'application/json',
-                      Autorization: `Bearer ${auth.getRefreshToken()}`
-                  },
-              });
-  
-              if(response.ok){
-                  auth.signOut();
-              }
-          } catch (error) {
-              console.log(error);
-          }
+  async function handleSignOut(e: React.MouseEvent<HTMLAnchorElement>) {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(`${API_URL}/signout`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Autorization: `Bearer ${auth.getRefreshToken()}`
+        },
+      });
+
+      if (response.ok) {
+        auth.signOut();
+      }
+    } catch (error) {
+      console.log(error);
     }
+  }
 
   return (
     <>
-    <ThemeProvider theme={theme}>
-    <CssBaseline />
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-        <Container maxWidth="xl">
-          <Toolbar disableGutters>
-            <img src={logoPath} alt="VivaBol Logo" style={{ width: '40px', height: 'auto', marginRight: '10px' }} />
-            <Typography
-              variant="h6"
-              noWrap
-              component="a"
-              href="#app-bar-with-responsive-menu"
-              sx={{
-                mr: 2,
-                display: { xs: 'none', md: 'flex' },
-                fontFamily: 'monospace',
-                fontWeight: 700,
-                letterSpacing: '.3rem',
-                color: 'inherit',
-                textDecoration: 'none',
-              }}
-            >
-              VIVABOL
-            </Typography>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+          <Container maxWidth="xl">
+            <Toolbar disableGutters>
+              <img src={logoPath} alt="VivaBol Logo" style={{ width: '40px', height: 'auto', marginRight: '10px' }} />
+              <Typography
+                variant="h6"
+                noWrap
+                component="a"
+                href="#app-bar-with-responsive-menu"
+                sx={{
+                  mr: 2,
+                  display: { xs: 'none', md: 'flex' },
+                  fontFamily: 'monospace',
+                  fontWeight: 700,
+                  letterSpacing: '.3rem',
+                  color: 'inherit',
+                  textDecoration: 'none',
+                }}
+              >
+                VIVABOL
+              </Typography>
 
-            <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-              <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleOpenNavMenu}
-                color="inherit"
-              >
-                <MenuIcon />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorElNav}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'left',
-                }}
-                open={Boolean(anchorElNav)}
-                onClose={handleCloseNavMenu}
-                sx={{ display: { xs: 'block', md: 'none' } }}
-              >
-                {pages.map((page) => (
-                  <MenuItem key={page} onClick={handleCloseNavMenu}>
-                    <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
-                  </MenuItem>
-                ))}
-              </Menu>
-            </Box>
-            <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-            <Typography
-              variant="h5"
-              noWrap
-              component="a"
-              href="#app-bar-with-responsive-menu"
-              sx={{
-                mr: 2,
-                display: { xs: 'flex', md: 'none' },
-                flexGrow: 1,
-                fontFamily: 'monospace',
-                fontWeight: 700,
-                letterSpacing: '.3rem',
-                color: 'inherit',
-                textDecoration: 'none',
-              }}
-            >
-              VIVABOL
-            </Typography>
-            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {/* Cambia esto */}
-                {page === 'Eventos' ? (
-                  <Link to="/eventos" style={{ textDecoration: 'none', color: 'inherit' }}>
-                    {page}
-                  </Link>
-                ) : page === 'Historia y cultura' ? (
-                  <Link to="/historia" style={{ textDecoration: 'none', color: 'inherit' }}>
-                    {page}
-                  </Link>
-                ) : page === 'Calendario' ? (
-                  <Link to="/calendario" style={{ textDecoration: 'none', color: 'inherit' }}>
-                    {page}
-                  </Link>
-                ) :(
-                  page
-                )}
-                
-              </Button>
-            ))}
-            </Box>
-            <Box sx={{ flexGrow: 0 }}>
-              <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+              <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                <IconButton
+                  size="large"
+                  aria-label="account of current user"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
+                  onClick={handleOpenNavMenu}
+                  color="inherit"
+                >
+                  <MenuIcon />
                 </IconButton>
-              </Tooltip>
-              <Menu
-                sx={{ mt: '45px' }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorElNav}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                  }}
+                  open={Boolean(anchorElNav)}
+                  onClose={handleCloseNavMenu}
+                  sx={{ display: { xs: 'block', md: 'none' } }}
+                >
+                  {pages.map((page) => (
+                    <MenuItem key={page} onClick={handleCloseNavMenu}>
+                      <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </Box>
+              <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+              <Typography
+                variant="h5"
+                noWrap
+                component="a"
+                href="#app-bar-with-responsive-menu"
+                sx={{
+                  mr: 2,
+                  display: { xs: 'flex', md: 'none' },
+                  flexGrow: 1,
+                  fontFamily: 'monospace',
+                  fontWeight: 700,
+                  letterSpacing: '.3rem',
+                  color: 'inherit',
+                  textDecoration: 'none',
                 }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
               >
-                {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                    <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
-                  </MenuItem>
+                VIVABOL2
+              </Typography>
+              <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                {user?.rol !== 1 ? (
+                  // Vista para Usuario común (rol_id = 1)
+                  <Button
+                    key={"Dashboard"}
+                    onClick={handleCloseNavMenu}
+                    sx={{ my: 2, color: 'white', display: 'block' }}
+                  >
+                    <Link to="/dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>
+                      Dashboard
+                    </Link>
+                  </Button>
+                ) : null
+                }
+                {pages.map((page) => (
+                  <Button
+                    key={page}
+                    onClick={handleCloseNavMenu}
+                    sx={{ my: 2, color: 'white', display: 'block' }}
+                  >
+                    {page === 'Eventos' ? (
+                      <Link to="/eventos" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        {page}
+                      </Link>
+                    ) : page === 'Historia y cultura' ? (
+                      <Link to="/historia" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        {page}
+                      </Link>
+                    ) : page === 'Calendario' ? (
+                      <Link to="/calendario" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        {page}
+                      </Link>
+                    ) : (
+                      page
+                    )}
+
+                  </Button>
                 ))}
-              </Menu>
-              <li>
-                            <a href="#" onClick={handleSignOut}>Sign out</a>
-                        </li>
-            </Box>
-          </Toolbar>
-        </Container>
-      </AppBar>
-      <main>{children}</main>
+              </Box>
+              <Box sx={{ flexGrow: 0 }}>
+                {!auth.isAuthenticated ? (
+                  <>
+                    <Button
+                      key="Login"
+                      onClick={handleCloseNavMenu}
+                      sx={{
+                        color: 'white',
+                        display: 'inline-block',  // Asegura que los botones estén en una línea
+                        marginRight: 2,  // Espacio entre los botones
+                      }}
+                    >
+                      <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        Login
+                      </Link>
+                    </Button>
+                    <Button
+                      key="Signup"
+                      onClick={handleCloseNavMenu}
+                      sx={{
+                        color: 'white',
+                        display: 'inline-block',  // Asegura que los botones estén en una línea
+                      }}
+                    >
+                      <Link to="/signup" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        Signup
+                      </Link>
+                    </Button>
+                  </>
+                ) : (
+                  // Si el usuario está autenticado
+                  <>
+                    <Tooltip title="Open settings">
+                      <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                        <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
+                      </IconButton>
+                    </Tooltip>
+                    <Menu
+                      sx={{ mt: '45px' }}
+                      id="menu-appbar"
+                      anchorEl={anchorElUser}
+                      anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                      }}
+                      keepMounted
+                      transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                      }}
+                      open={Boolean(anchorElUser)}
+                      onClose={handleCloseUserMenu}
+                    >
+                      <MenuItem href="/" key="signout" onClick={handleSignOut}>
+                        <Typography sx={{ textAlign: 'center' }}>Cerrar sesion</Typography>
+                      </MenuItem>
+                    </Menu>
+                  </>
+                )}
+              </Box>
+            </Toolbar>
+          </Container>
+        </AppBar>
+        <main>{children}</main>
       </ThemeProvider>
     </>
   );

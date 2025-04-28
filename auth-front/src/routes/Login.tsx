@@ -40,7 +40,7 @@ export default function Login(){
                 }else{
                     console.log('Something went wrong');
                     const json = (await response.json()) as AuthResponseError;
-                    setErrorResponse(json.body.error);
+                    setErrorResponse(json.body.error) ;
                     return;
                 }
             } catch (error) {

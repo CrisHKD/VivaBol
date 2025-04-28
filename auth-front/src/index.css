@@ -1,8 +1,10 @@
+
 :root {
   font-family: Arial, Helvetica, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 }
+
 
 body {
   padding: 0;
@@ -14,7 +16,7 @@ label {
 }
 
 .form {
-  width: 400px;
+  width: 500px;
   margin: 0 auto;
 }
 

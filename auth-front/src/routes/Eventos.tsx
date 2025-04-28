@@ -1,4 +1,3 @@
-
 import DefaultHeader from "../layout/HeaderDefault";
 import EventoTarjeta from "../components/EventoTarjeta";
 import DepatamentoSelect from "../components/DepartamentoSelect";
@@ -11,100 +10,115 @@ import Footer from "../layout/Footer";
 import { API_URL } from "../auth/constants";
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-  
+import { useLocation, useNavigate } from 'react-router-dom';
 
-export default function Eventos(){
-    const [eventos, setEventos] = useState([]);
-    const [pagina, setPagina] = useState(1);
+export default function Eventos() {
+  const [eventos, setEventos] = useState([]);
+  const [pagina, setPagina] = useState(1);
 
-    const obtenerEventos = async (paginaActual: number) => {
-        try {
-          const response = await axios.get(`${API_URL}/eventos?page=${paginaActual}`);
-          setEventos(response.data);
-        } catch (error) {
-          console.error('Error al obtener eventos:', error);
-        }
-      };
-    
-      useEffect(() => {
-        obtenerEventos(pagina);
-      }, [pagina]);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-   
-    return (
-        <>
-        <DefaultHeader>
-            <Box 
-                sx={{
+  // Obtiene el parámetro "page" de la URL
+  const obtenerEventos = async (paginaActual: number) => {
+    try {
+      const response = await axios.get(`${API_URL}/eventos?page=${paginaActual}`);
+      setEventos(response.data);
+    } catch (error) {
+      console.error('Error al obtener eventos:', error);
+    }
+  };
 
-                    width: '100%',
-                    justifyContent: 'center', // Centrado horizontal
-                    padding: '36px',          // Espaciado alrededor de los componentes
-                }}
-            />
-            <Box 
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'right', // Centrado horizontal
-                    alignItems: 'center',     // Centrado vertical
-                    gap: '20px',              // Espacio entre los componentes
-                    flexWrap: 'wrap',         // Para que se ajusten en pantallas pequeñas
-                    padding: '20px',
-                    paddingRight:'120px'           // Espaciado alrededor de los componentes
-                }}
-            >
-                <DepatamentoSelect/>
-                <CategoriaSelect/>
-                <SearchComponent/>
-            </Box>
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column', // Asegura que el contenedor ocupe toda la pantalla
-                }}
-                >
-                {/* Contenedor para las tarjetas de eventos */}
-                <Box
-                    sx={{
-                        flexGrow: 1,
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        justifyContent: 'center',
-                        gap: '20px',
-                    }}
-                    >
-                    {eventos.map((evento: any) => (
-                        <EventoTarjeta
-                        key={evento.id} // Usa un ID único si está disponible
-                        titulo={evento.titulo}
-                        fecha_inicio={evento.fecha_inicio}
-                        ubicacion={evento.ubicacion}
-                        imagen ={evento.imagen}
-                        />
-                    ))}
-                </Box>
+  useEffect(() => {
+    // Obtener la página desde la URL si está presente
+    const params = new URLSearchParams(location.search);
+    const pageParam = params.get('page');
+    const pageNumber = pageParam ? parseInt(pageParam, 10) : 1;
 
-                {/* Paginación */}
-                <Box
-                    sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    marginTop: 'auto', // Esto asegura que la paginación se mantenga al final
-                    padding: '20px',   // Añade algo de espacio alrededor de la paginación
-                    }}
-                >
-                    <Stack spacing={2}>
-                        <Pagination
-                        count={10} // Puedes actualizar esto según la cantidad total de páginas
-                        shape="rounded"
-                        page={pagina}
-                        onChange={(_, value) => setPagina(value)}
-                        />
-                    </Stack>
-                </Box>
-            </Box>
-        </DefaultHeader>
-        <Footer/>
-        </>
-    );
+    setPagina(pageNumber); // Establecer el número de página
+    obtenerEventos(pageNumber); // Obtener los eventos de esa página
+  }, [location.search]); // Cada vez que la búsqueda en la URL cambie
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    // Actualiza la URL con el número de página seleccionado
+    navigate(`?page=${value}`);
+  };
+
+  return (
+    <>
+      <DefaultHeader>
+        <Box
+          sx={{
+            width: '100%',
+            justifyContent: 'center',
+            padding: '36px',
+          }}
+        />
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'right',
+            alignItems: 'center',
+            gap: '20px',
+            flexWrap: 'wrap',
+            padding: '20px',
+            paddingRight: '120px',
+          }}
+        >
+          <DepatamentoSelect />
+          <CategoriaSelect />
+          <SearchComponent />
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          {/* Contenedor para las tarjetas de eventos */}
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              gap: '20px',
+            }}
+          >
+            {eventos.map((evento: any) => (
+              <EventoTarjeta
+                key={evento.id}
+                id={evento.id}
+                titulo={evento.titulo}
+                fecha_inicio={evento.fecha_inicio}
+                ubicacion={evento.ubicacion}
+                imagen={evento.imagen}
+                departamento={evento.departamento}
+              />
+            ))}
+          </Box>
+
+          {/* Paginación */}
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              marginTop: 'auto',
+              padding: '20px',
+            }}
+          >
+            <Stack spacing={2}>
+              <Pagination
+                count={10} // Puedes actualizar esto según la cantidad total de páginas
+                shape="rounded"
+                page={pagina}
+                onChange={handlePageChange}
+              />
+            </Stack>
+          </Box>
+        </Box>
+      </DefaultHeader>
+      <Footer />
+    </>
+  );
 }

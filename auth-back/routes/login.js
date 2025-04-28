@@ -14,7 +14,7 @@ router.post('/', (req, res) => {
     }
     
     UserModel.getUserByEmail(email, (err, user) => {
-      if (err) {return res.status(500).json({ error: 'Error al verificar email', details: err });}
+      if (err) {return res.status(500).json({ error: 'Error al verificar email1', details: err });}
       if (!user) return res.status(400).json(jsonResponse(400,{error: "Correo no valido"}));
 
       // 2️⃣ Comparar contraseñas

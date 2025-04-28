@@ -13,15 +13,18 @@ export interface AuthResponseError{
 }
 
 export interface User {
-    _id: string,
+    id: number,
+    ident:number,
     username: string,
     name: string,
+    rol: number,
 
     lastName: string,
     email: string,
     birthDate: string,
     country:string,
     gender: string,
+    
 }
 
 export interface AccessTokenResponse {

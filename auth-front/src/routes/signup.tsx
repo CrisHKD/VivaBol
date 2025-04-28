@@ -8,8 +8,6 @@ import { AuthResponseError } from "../types/types";
 import ReCAPTCHA from "react-google-recaptcha";
 import DefaultHeader from "../layout/HeaderDefault";
 
-import theme from '../layout/DefaultTheme';
-
 import "@fontsource/roboto/400.css";
 import {
     Select as MuiSelect, MenuItem, InputLabel, FormControl, Card, CardContent
@@ -20,9 +18,6 @@ import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-
-import { ThemeProvider, } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
 
 import countries from "world-countries";
 
@@ -36,23 +31,30 @@ export default function Signup() {
     const [gender, setGender] = useState('');
     const [country, setCountry] = useState<string>("");
     const [password, setPassword] = useState('');
+    const [repeatPassword, setRepeatPassword] = useState('');
 
 
     const [errorResponse, setErrorResponse] = useState('');
 
     const [showPassword, setShowPassword] = React.useState(false);
-        const handleClickShowPassword = () => setShowPassword((show) => !show);
-        const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-            event.preventDefault();
-          };
-        
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    };
+
 
     const auth = useAuth();
     const goTo = useNavigate();
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-        
+
         e.preventDefault();
+
+
+        if (password !== repeatPassword) {
+            alert('Las contraseñas no coinciden');
+            return;
+        }
 
         try {
             const response = await fetch(`${API_URL}/signup`, {
@@ -69,7 +71,7 @@ export default function Signup() {
                     gender,
                     password,
                 })
-            })
+            });
             if (response.ok) {
                 console.log('User created');
                 setErrorResponse('');
@@ -108,17 +110,17 @@ export default function Signup() {
 
     return (
         <>
-        <DefaultHeader>
+            <DefaultHeader>
                 <Card variant="outlined">
                     <CardContent>
-                        <Box 
-                                        sx={{
-                        
-                                            width: '100%',
-                                            justifyContent: 'center', // Centrado horizontal
-                                            padding: '36px',          // Espaciado alrededor de los componentes
-                                        }}
-                                    />
+                        <Box
+                            sx={{
+
+                                width: '100%',
+                                justifyContent: 'center', // Centrado horizontal
+                                padding: '36px',          // Espaciado alrededor de los componentes
+                            }}
+                        />
                         <Box
                             component="form"
                             sx={{
@@ -143,7 +145,7 @@ export default function Signup() {
                                     //id="outlined-basic"
                                     label="Nombres"
                                     variant="outlined"
-                                    sx={{ "& .MuiInputBase-input": {  padding: "15px" } }}
+                                    sx={{ "& .MuiInputBase-input": { padding: "15px" } }}
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     fullWidth // Esto asegura que los campos ocupen el mismo tamaño
@@ -164,16 +166,16 @@ export default function Signup() {
                                 variant="outlined"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                sx={{ "& .MuiInputBase-input": {  padding: "15px"  } }}
+                                sx={{ "& .MuiInputBase-input": { padding: "15px" } }}
                             />
-                            
+
                             <Box sx={{ display: "flex", gap: 2 }}>
                                 <Autocomplete
                                     disablePortal
                                     options={formattedCountries}
                                     value={formattedCountries.find((c) => c.value === country) || null} // Asegúrate de que sea el objeto completo
                                     onChange={(_, selectedOption) => setCountry(selectedOption?.value || "")} // Guarda solo el código del país
-                                    sx={{ width: 300,}}
+                                    sx={{ width: 300, }}
                                     renderInput={(params) => <TextField {...params} label="Pais" />}
                                 />
                                 <FormControl fullWidth>
@@ -201,44 +203,56 @@ export default function Signup() {
                                 onChange={onChangeCaptcha}
                             />
 
-                            <TextField
-                                label="Contraseña"
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                variant="outlined" // Puedes elegir entre "outlined", "filled", "standard"
-                                sx={{ width: 300}} // Ajusta el ancho si es necesario
-                            />
-                            
-                            <FormControl sx={{ m: 1}} variant="outlined">
+                            <FormControl sx={{ m: 1, width: 300 }} variant="outlined">
                                 <InputLabel htmlFor="outlined-adornment-password">Contraseña</InputLabel>
                                 <OutlinedInput
                                     id="outlined-adornment-password"
                                     type={showPassword ? 'text' : 'password'}
+                                    value={password} // <-- Aquí conectas el valor
+                                    onChange={(e) => setPassword(e.target.value)} // <-- Aquí actualizas el estado
                                     endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                        aria-label={
-                                            showPassword ? 'hide the password' : 'display the password'
-                                        }
-                                        onClick={handleClickShowPassword}
-                                        onMouseDown={handleMouseDownPassword}
-                                        edge="end"
-                                        >
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                                        </IconButton>
-                                    </InputAdornment>
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                                                onClick={handleClickShowPassword}
+                                                onMouseDown={handleMouseDownPassword}
+                                                edge="end"
+                                            >
+                                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>
+                                        </InputAdornment>
                                     }
-                                    
                                     label="Contraseña"
                                 />
-                                </FormControl>
+                            </FormControl>
+                            <FormControl sx={{ m: 1 }} variant="outlined">
+                                <InputLabel htmlFor="outlined-adornment-password">Repetir contraseña</InputLabel>
+                                <OutlinedInput
+                                    id="outlined-adornment-repeat-password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={repeatPassword}
+                                    onChange={(e) => setRepeatPassword(e.target.value)}
+                                    endAdornment={
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                                                onClick={handleClickShowPassword}
+                                                onMouseDown={handleMouseDownPassword}
+                                                edge="end"
+                                            >
+                                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    }
+                                    label="Repetir contraseña"
+                                />
+                            </FormControl>
                             <Button variant="contained" color="success" type="submit">Registrarse</Button>
                         </Box>
                     </CardContent>
 
                 </Card>
-        </DefaultHeader>
+            </DefaultHeader>
         </>
     );
 }

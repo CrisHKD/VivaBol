@@ -50,7 +50,7 @@ const UserModel = {
     },
 
     getUserByEmail: (email, callback) => {
-        const sql = "SELECT id, nombres, apellidos, email, password FROM usuarios WHERE email = ?";
+        const sql = "SELECT * FROM usuarios WHERE email = ?";
         db.query(sql, [email], (error, results) => {
             if (error) return callback(error, null);
             if (results.length === 0) return callback(null, null); // No encontró usuario

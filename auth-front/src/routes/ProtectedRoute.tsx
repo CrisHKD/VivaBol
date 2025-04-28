@@ -1,9 +1,23 @@
-import {Outlet, Navigate} from 'react-router-dom';
-import { useState } from 'react';
+import { Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthProvider';
 
-export default function ProtectedRoute(){
-    const auth = useAuth();
+interface ProtectedRouteProps {
+  allowedRoleIds: number[]; // ahora usamos números
+}
 
-    return auth.isAuthenticated ? <Outlet /> : <Navigate to="/" />;
+export default function ProtectedRoute({ allowedRoleIds }: ProtectedRouteProps) {
+  const auth = useAuth();
+  const user = auth.getUser?.();
+
+  if (!auth.isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+  console.log('user', user);
+
+  // Verifica si el rol_id está permitido
+  if (!user || user.rol === undefined || !allowedRoleIds.includes(user.rol)) {
+    return <Navigate to="/eventos" replace />;
+  }
+
+  return <Outlet />;
 }

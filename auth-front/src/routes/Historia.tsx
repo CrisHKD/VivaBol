@@ -49,6 +49,7 @@ export default function Historia(){
         setValue(newValue);
     };
 
+
     return (
         <DefaultHeader>
             <Box 
@@ -59,6 +60,7 @@ export default function Historia(){
                     padding: '36px',          // Espaciado alrededor de los componentes
                 }}
             />
+            
             <Box
                 sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', padding: '40px'}}
             >
