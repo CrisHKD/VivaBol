@@ -9,6 +9,9 @@ import { useNavigate } from "react-router-dom";
 
 import { useAuth } from '../auth/AuthProvider';
 
+//https://www.deviantart.com/jonizaak/art/Ultimate-Monopoly-Rules-425676962
+//https://www.deviantart.com/chadws/art/Ultimate-Monopoly-Action-Cards-Set-425506246
+
 const CrearEventoModal: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [titulo, setTitulo] = useState('');

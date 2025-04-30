@@ -8,6 +8,8 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import PresidenteTarjeta from "../components/PresidenteTarjeta";
 
+import ChatContainer from "../layout/agenteVirtual";
+
 interface TabPanelProps {
     children?: React.ReactNode;
     index: number;
@@ -173,6 +175,7 @@ export default function Historia(){
                     </Box>
                 </TabPanel>
                 </Box>
+                <ChatContainer/>
             <Footer/>
         </DefaultHeader>
     );

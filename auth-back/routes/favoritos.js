@@ -70,7 +70,7 @@ router.delete('/', async (req, res) => {
       res.status(500).json({ error: 'Error en el servidor' });
     }
   });
-  
+
   router.get('/', async (req, res) => {
     try {
       const { usuario_id, evento_id } = req.query;
@@ -116,6 +116,28 @@ router.delete('/', async (req, res) => {
       });
   
         return res.status(200).json(favoritos);
+    } catch (error) {
+      console.error('Error al buscar favorito:', error);
+      res.status(500).json({ error: 'Error en el servidor' });
+    }
+  });
+
+  router.get('/calendario', async (req, res) => {
+    try {
+      const { usuario_id, evento_id } = req.query;
+  
+      // Validaciones mínimas
+      if (!usuario_id || !evento_id) {
+        return res.status(400).json({ error: 'Faltan campos obligatorios: usuario_id y evento_id' });
+      }
+  
+      // Buscar si existe el favorito
+      const favoritoExistente = await favoritos_eventos.findAll({
+        where: {
+          usuario_id: Number(usuario_id),
+          evento_id: Number(evento_id)
+        }
+      });
     } catch (error) {
       console.error('Error al buscar favorito:', error);
       res.status(500).json({ error: 'Error en el servidor' });
