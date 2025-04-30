@@ -6,6 +6,35 @@ const patrocinadores = models.patrocinador;
 const patrocinadorEvento = models.patrocinador_evento;
 const eventos = models.eventos;
 
+router.post('/subir', async (req, res) => {
+    console.log(req.body);  // Verifica si los datos están siendo recibidos correctamente
+    
+    try {
+        const { nombre, logo_url } = req.body;
+
+        if (!nombre || !logo_url) {
+            return res.status(400).json({ error: 'Faltan campos obligatorios: nombre, logo_url' });
+        }
+
+        const patrocinadorExiste = await patrocinadores.findOne({
+            where: { nombre },
+        });
+
+        if (patrocinadorExiste) {
+            return res.status(409).json({ error: 'El patrocinador ya existe.' });
+        }
+
+        const nuevoPatrocinador = await patrocinadores.create({
+            nombre,
+            logo_url,
+        });
+
+        res.status(201).json({ mensaje: 'Patrocinador agregado exitosamente', patrocinador: nuevoPatrocinador });
+    } catch (error) {
+        console.error('Error al agregar patrocinador:', error);
+        res.status(500).json({ error: 'Error en el servidor' });
+    }
+});
 
 router.get('/', async (req, res) => {
     try {
