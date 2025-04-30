@@ -17,8 +17,8 @@ interface Data {
   capacity: number,
   department: string,
   location: string,
-  type: number,
-  status: number,
+  type: string,
+  status: string,
 }
 interface DataForm {
   titulo: string,
@@ -39,7 +39,10 @@ interface FixedCenterBoxProps {
   onClose: () => void;
 }
 
+
+
 const EdicionEventos: React.FC<FixedCenterBoxProps> = ({ evento, onClose }) => {
+  const [isOpen, setIsOpen] = useState(true);
   const [eventoDat, setEvento] = React.useState<DataForm | null>(null);
   const [titulo, setTitulo] = useState('');
   const [fechaInicio, setFechaInicio] = useState('');
@@ -52,8 +55,6 @@ const EdicionEventos: React.FC<FixedCenterBoxProps> = ({ evento, onClose }) => {
   const [estado, setEstado] = useState<number>(0);
   const [coordenadas, setCoordenadas] = useState<number>(0);
   const [imagen, setImagen] = useState<string>('');
-
-
 
   const [formData, setFormData] = useState<DataForm>({
     titulo: '',
@@ -87,7 +88,7 @@ const EdicionEventos: React.FC<FixedCenterBoxProps> = ({ evento, onClose }) => {
       setUbicacion(eventoDat.ubicacion);
       setDepartamento(eventoDat.departamento);
 
-    
+
     }
   }, [eventoDat]);
 
@@ -105,179 +106,198 @@ const EdicionEventos: React.FC<FixedCenterBoxProps> = ({ evento, onClose }) => {
     // También puedes cerrar el modal
     onClose();
   };
+  const handleClose = () => {
+    setIsOpen(false);  // Cerrar el modal
+  };
 
   return (
-    <Box
-      sx={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 2000,
-      }}
-    >
-      <Box sx={{
-        padding: 3,
-        backgroundColor: 'white',
-        borderRadius: 2,
-        width: '90%', // Ancho del modal 
-        maxHeight: '80vh', // Limitar la altura máxima
-        overflowY: 'auto',
-      }}
-      >
-        <h2>Editar Evento</h2>
-        <form onSubmit={handleSubmit}>
-          {/* Título */}
-          <Box sx={{ display: "flex", gap: 2 }}>
-            <div>
-              <TextField
-                label="Título"
-                name="titulo"
-                value={titulo}
-                onChange={(e) => setTitulo(e.target.value)}
-                fullWidth
-              />
-
-              {/* Descripción */}
-              <TextField
-                label="Descripción"
-                name="descripcion"
-                value={descripcion}
-                onChange={(e) => setDescripcion(e.target.value)}
-                fullWidth
-                multiline
-                rows={4}
-                margin="normal"
-              />
-            </div>
-            <div>
-              <TextField
-                label="Fecha de inicio"
-                type="datetime-local"
-                name="fecha_inicio"
-                value={fechaInicio}
-                onChange={(e) => setFechaInicio(e.target.value)}
-                fullWidth
-                margin="normal"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-
-              {/* Fecha de fin */}
-              <TextField
-                label="Fecha de fin"
-                type="datetime-local"
-                name="fecha_fin"
-                value={fechaFin}
-                onChange={(e) => setFechaFin(e.target.value)}
-                fullWidth
-                margin="normal"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
-
-              {/* Capacidad */}
-              <TextField
-                label="Capacidad"
-                type="number"
-                name="capacidad"
-                value={capacidad}
-                onChange={(e) => setCapacidad(Number(e.target.value) || 0)}
-                fullWidth
-                margin="normal"
-              />
-            </div>
-          </Box>
-
-
-          {/* Ubicación */}
-          <TextField
-            label="Ubicación"
-            name="ubicacion"
-            value={ubicacion}
-            onChange={(e) => setUbicacion(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
-
-          {/* Departamento */}
-          <TextField
-            label="Departamento"
-            name="departamento"
-            value={departamento}
-            onChange={(e) => setDepartamento(e.target.value)}
-            fullWidth 
-            margin="normal"
-          />
-
-          {/* Categoría */}
-          <FormControl fullWidth margin="normal">
-            <InputLabel>Categoria</InputLabel>
-            <Select
-              label="Categoria"
-              name="categoria_id"
-              value={formData.categoria_id}
-              sx={{ zIndex: 2001 }}  // Añadir z-index aquí también si es necesario
-              MenuProps={{
-                PaperProps: {
-                  style: {
-                    zIndex: 1300,  // Asegurarse de que el menú desplegable se muestre por encima
-                  },
-                },
-              }}
-
+    <>
+      {isOpen && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 50,
+            left: 100,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',  // Fondo con opacidad
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <Box
+            sx={{
+              position: 'relative',
+              padding: 3,
+              backgroundColor: 'white',
+              borderRadius: 2,
+              width: '80%',
+              height: '90%',
+              overflowY: 'auto',
+            }}
+          >
+            <Box sx={{
+              padding: 3,
+              backgroundColor: 'white',
+              borderRadius: 2,
+              width: '100%', // Ancho del modal 
+              maxHeight: '80vh', // Limitar la altura máxima
+              overflowY: 'auto',
+            }}
             >
-              <MenuItem value={1}>Cultural</MenuItem>
-              <MenuItem value={2}>Académico</MenuItem>
-              <MenuItem value={3}>Deportivo</MenuItem>
-            </Select>
-          </FormControl>
+              <h2>Editar Evento</h2>
+              <form onSubmit={handleSubmit}>
+                {/* Título */}
+                <Box sx={{ display: "flex", gap: 2 }}>
+                  <div>
+                    <TextField
+                      label="Título"
+                      name="titulo"
+                      value={titulo}
+                      onChange={(e) => setTitulo(e.target.value)}
+                      fullWidth
+                    />
 
-          {/* Estado */}
-          <FormControl fullWidth margin="normal">
-            <InputLabel>Estado</InputLabel>
-            <Select
-              label="Estado"
-              name="estado_id"
-              value={formData.estado_id}
+                    {/* Descripción */}
+                    <TextField
+                      label="Descripción"
+                      name="descripcion"
+                      value={descripcion}
+                      onChange={(e) => setDescripcion(e.target.value)}
+                      fullWidth
+                      multiline
+                      rows={4}
+                      margin="normal"
+                    />
+                  </div>
+                  <div>
+                    <TextField
+                      label="Fecha de inicio"
+                      type="datetime-local"
+                      name="fecha_inicio"
+                      value={fechaInicio}
+                      onChange={(e) => setFechaInicio(e.target.value)}
+                      fullWidth
+                      margin="normal"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
+
+                    {/* Fecha de fin */}
+                    <TextField
+                      label="Fecha de fin"
+                      type="datetime-local"
+                      name="fecha_fin"
+                      value={fechaFin}
+                      onChange={(e) => setFechaFin(e.target.value)}
+                      fullWidth
+                      margin="normal"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
+
+                    {/* Capacidad */}
+                    <TextField
+                      label="Capacidad"
+                      type="number"
+                      name="capacidad"
+                      value={capacidad}
+                      onChange={(e) => setCapacidad(Number(e.target.value) || 0)}
+                      fullWidth
+                      margin="normal"
+                    />
+                  </div>
+                </Box>
+
+
+                {/* Ubicación */}
+                <TextField
+                  label="Ubicación"
+                  name="ubicacion"
+                  value={ubicacion}
+                  onChange={(e) => setUbicacion(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                />
+
+                {/* Departamento */}
+                <TextField
+                  label="Departamento"
+                  name="departamento"
+                  value={departamento}
+                  onChange={(e) => setDepartamento(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                />
+
+                {/* Categoría */}
+                <FormControl fullWidth margin="normal">
+                  <InputLabel>Categoria</InputLabel>
+                  <Select
+                    label="Categoria"
+                    name="categoria_id"
+                    value={formData.categoria_id}
+                    sx={{ zIndex: 2001 }}  // Añadir z-index aquí también si es necesario
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          zIndex: 1300,  // Asegurarse de que el menú desplegable se muestre por encima
+                        },
+                      },
+                    }}
+
+                  >
+                    <MenuItem value={1}>Cultural</MenuItem>
+                    <MenuItem value={2}>Académico</MenuItem>
+                    <MenuItem value={3}>Deportivo</MenuItem>
+                  </Select>
+                </FormControl>
+
+                {/* Estado */}
+                <FormControl fullWidth margin="normal">
+                  <InputLabel>Estado</InputLabel>
+                  <Select
+                    label="Estado"
+                    name="estado_id"
+                    value={formData.estado_id}
 
 
 
-            >
-              <MenuItem value={1}>Pendiente</MenuItem>
-              <MenuItem value={2}>Confirmado</MenuItem>
-              <MenuItem value={3}>Cancelado</MenuItem>
-            </Select>
-          </FormControl>
+                  >
+                    <MenuItem value={1}>Pendiente</MenuItem>
+                    <MenuItem value={2}>Confirmado</MenuItem>
+                    <MenuItem value={3}>Cancelado</MenuItem>
+                  </Select>
+                </FormControl>
 
-          {/* Imagen */}
-          <TextField
-            label="Imagen URL"
-            name="imagen"
-            value={formData.imagen}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-          />
+                {/* Imagen */}
+                <TextField
+                  label="Imagen URL"
+                  name="imagen"
+                  value={formData.imagen}
+                  onChange={handleChange}
+                  fullWidth
+                  margin="normal"
+                />
 
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-            <Button variant="contained" color="primary" type="submit">
-              Guardar Cambios
-            </Button>
-            <Button variant="outlined" color="secondary" onClick={onClose}>
-              Cancelar
-            </Button>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
+                  <Button variant="contained" color="primary" type="submit">
+                    Guardar Cambios
+                  </Button>
+                  <Button variant="outlined" color="secondary" onClick={onClose}>
+                    Cancelar
+                  </Button>
+                </Box>
+              </form>
+            </Box>
           </Box>
-        </form>
-      </Box>
-    </Box>
+        </Box>
+      )}
+    </>
   );
 };
 

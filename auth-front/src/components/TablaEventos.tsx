@@ -18,6 +18,22 @@ import CrearEvento from '../layout/CrearEvento';
 
 import AddIcon from '@mui/icons-material/Add';
 
+const categorias = [
+  { id: 1, nombre: "Cultural" },
+  { id: 2, nombre: "Académico" },
+  { id: 3, nombre: "Tecnológico" },
+  { id: 4, nombre: "Gatronómico" },
+  { id: 5, nombre: "Ferial" },
+  { id: 6, nombre: "Deportivo" },
+  { id: 7, nombre: "Social" },
+];
+
+const estados = [
+  { id: 1, nombre: "Publicado" },
+  { id: 2, nombre: "Borrador" },
+  { id: 3, nombre: "Cancelado" },
+];
+
 interface Column {
   //id: 'name' | 'code' | 'population' | 'size' | 'density';
   id: 'title' | 'description' | 'date' | 'capacity' | 'department' | 'location' | 'type' | 'status' | 'actions';
@@ -75,9 +91,18 @@ interface Data {
   capacity: number,
   department: string,
   location: string,
-  type: number,
-  status: number,
-}
+  type: string,
+  status: string,
+};
+const obtenerCategoria = (id: number) => {
+  const categoria = categorias.find(c => c.id === id);
+  return categoria ? categoria.nombre : 'N/D';
+};
+
+const obtenerEstado = (id: number) => {
+  const estado = estados.find(e => e.id === id);
+  return estado ? estado.nombre : 'N/D';
+};
 
 function createData(
   id: number,
@@ -90,11 +115,24 @@ function createData(
   type: number,
   status: number,
 ): Data {
-  return {id, title, description, date, capacity, department, location, type, status };
+  return {
+    id,
+    title,
+    description,
+    date,
+    capacity,
+    department,
+    location,
+    type: obtenerCategoria(type), // Convertir ID de categoria a nombre
+    status: obtenerEstado(status), // Convertir ID de estado a nombre
+  };
+};
+
+interface TableEventosProps {
+  categoriaIds: number[]; // Recibimos los IDs de las categorías como prop
 }
 
-
-export default function TablaEventos() {
+export default function TablaEventos({ categoriaIds }: TableEventosProps) {
   //Paginacion
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -125,11 +163,13 @@ export default function TablaEventos() {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+  
 
   useEffect(() => {
     const fetchEventos = async () => {
       try {
-        const res = await axios.get(`${API_URL}/eventos/todos?categoria_id=2&categoria_id=3`);
+        const categoriaParams = categoriaIds.map(id => `categoria_id=${id}`).join('&');
+        const res = await axios.get(`${API_URL}/eventos/todos?${categoriaParams}`);
         const eventos = res.data.eventos;
 
         const formatted = eventos.map((e: any) =>
@@ -145,8 +185,8 @@ export default function TablaEventos() {
             e.capacidad || 0,
             e.departamento || 'N/D',
             e.ubicacion || 'N/D',
-            e.categoria_id || 'N/D', // asegúrate de traer este campo
-            e.estado_id || 'N/D'
+            e.categoria_id || 'N/D', // El ID de la categoría que se convierte a nombre
+            e.estado_id || 'N/D' // El ID del estado que se convierte a nombre
           )
         );
 
@@ -157,7 +197,7 @@ export default function TablaEventos() {
     };
 
     fetchEventos();
-  }, []);
+  }, [categoriaIds]);
 
   return (
     <Paper sx={{ width: '100%', }}>

@@ -3,37 +3,54 @@ const router = express.Router();
 const { models } = require('../models/init-models');
 const { where } = require('sequelize');
 const patrocinadores = models.patrocinador; 
-const patrocinadorEvento = models.patrocinador_evento;
 const eventos = models.eventos;
+const patrocinador_evento = models.patrocinador_evento;
 
-router.post('/subir', async (req, res) => {
-    console.log(req.body);  // Verifica si los datos están siendo recibidos correctamente
-    
-    try {
-        const { nombre, logo_url } = req.body;
+const multer = require('multer');
+const cloudinary = require('../lib/cloudinary');
 
-        if (!nombre || !logo_url) {
-            return res.status(400).json({ error: 'Faltan campos obligatorios: nombre, logo_url' });
-        }
+const upload = multer();
 
-        const patrocinadorExiste = await patrocinadores.findOne({
-            where: { nombre },
-        });
+router.post('/subir', upload.single('logo'), async (req, res) => {
+  const { file } = req;
+  const { nombre } = req.body;
 
-        if (patrocinadorExiste) {
-            return res.status(409).json({ error: 'El patrocinador ya existe.' });
-        }
+  if (!nombre || !file) {
+      return res.status(400).json({ error: 'Faltan campos obligatorios: nombre o archivo' });
+  }
 
-        const nuevoPatrocinador = await patrocinadores.create({
-            nombre,
-            logo_url,
-        });
+  try {
+      // Verifica si el patrocinador ya existe
+      const patrocinadorExiste = await patrocinadores.findOne({ where: { nombre } });
+      if (patrocinadorExiste) {
+          return res.status(409).json({ error: 'El patrocinador ya existe.' });
+      }
 
-        res.status(201).json({ mensaje: 'Patrocinador agregado exitosamente', patrocinador: nuevoPatrocinador });
-    } catch (error) {
-        console.error('Error al agregar patrocinador:', error);
-        res.status(500).json({ error: 'Error en el servidor' });
-    }
+      // Sube el archivo a Cloudinary
+      cloudinary.uploader.upload_stream(
+          { resource_type: 'image' },
+          async (err, result) => {
+              if (err) {
+                  return res.status(500).json({ error: 'Error al subir la imagen', details: err });
+              }
+
+              // Crea el nuevo patrocinador en la base de datos
+              const nuevoPatrocinador = await patrocinadores.create({
+                  nombre,
+                  logo_url: result.secure_url,
+              });
+
+              res.status(201).json({
+                  mensaje: 'Patrocinador agregado exitosamente',
+                  patrocinador: nuevoPatrocinador,
+              });
+          }
+      ).end(file.buffer);
+
+  } catch (error) {
+      console.error('Error al agregar patrocinador:', error);
+      res.status(500).json({ error: 'Error en el servidor' });
+  }
 });
 
 router.get('/', async (req, res) => {
@@ -46,11 +63,40 @@ router.get('/', async (req, res) => {
     }
   });
 
+  router.delete('/:id', async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      // Borrar los registros en la tabla intermedia Patrocinador_Evento relacionados con este patrocinador
+      await patrocinador_evento.destroy({
+        where: {
+          patrocinador_id: id
+        }
+      });
+  
+      // Ahora borrar el patrocinador
+      const patrocinadorBorrado = await patrocinadores.destroy({
+        where: {
+          id
+        }
+      });
+  
+      if (patrocinadorBorrado) {
+        res.status(200).json({ mensaje: 'Patrocinador y sus registros asociados eliminados exitosamente.' });
+      } else {
+        res.status(404).json({ error: 'Patrocinador no encontrado.' });
+      }
+  
+    } catch (error) {
+      console.error('Error al eliminar el patrocinador:', error);
+      res.status(500).json({ error: 'Error al eliminar el patrocinador y sus registros.' });
+    }
+  });
+
   router.get('/eventos', async (req, res) => {
     try {
       // Lee `evento_id` desde req.query, ya que lo estás enviando en la URL como parámetro
       const { evento_id } = req.query;  // Usar req.query en lugar de req.body para parámetros de URL
-      console.log("--------------------",evento_id);
       if (!evento_id) {
         return res.status(400).json({ error: 'Falta el parámetro evento_id' });
       }

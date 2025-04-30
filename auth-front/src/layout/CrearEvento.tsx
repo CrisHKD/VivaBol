@@ -27,7 +27,7 @@ const CrearEventoModal: React.FC = () => {
   const auth = useAuth();
   const user = auth.getUser?.();
   const identidad = user?.ident;
-  console.log("Identidad usuario: "+identidad);
+  console.log("Identidad usuario: " + identidad);
 
   const [errorResponse, setErrorResponse] = useState('');
 
@@ -38,7 +38,7 @@ const CrearEventoModal: React.FC = () => {
 
   // Listado de departamentos
   const departamentos = [
-    "La Paz", "Oruro", "Potosí", "Santa Cruz", "Beni", "Pando", "Tarija", "Cochabamba", "Tariza","Chuquisaca"
+    "La Paz", "Oruro", "Potosí", "Santa Cruz", "Beni", "Pando", "Tarija", "Cochabamba", "Tariza", "Chuquisaca"
   ];
 
   // Categorías
@@ -61,59 +61,59 @@ const CrearEventoModal: React.FC = () => {
   const goTo = useNavigate();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-          
-          e.preventDefault();
-          const formData = {
-            titulo,
-            descripcion,
-            fecha_inicio: fechaInicio,
-            fecha_fin: fechaFin,
-            capacidad,
-            ubicacion,
-            departamento,
-            organizador_id: user?.ident, 
-            categoria_id: categoria,
-            estado_id: estado,
-            imagen, // Este campo puede ser gestionado por el backend
-            coordenadas: 0, // Esto puede ser gestionado por el backend o el mapa
-          };
-          console.log('Datos para crear el evento:', formData);
-  
-          try {
-              const response = await fetch(`${API_URL}/createEvent`, {
-                  method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({
-                    titulo,
-                    descripcion,
-                    fecha_inicio: fechaInicio,
-                    fecha_fin: fechaFin,
-                    capacidad,
-                    ubicacion,
-                    departamento,
-                    organizador_id: user?.ident, 
-                    categoria_id: categoria,
-                    estado_id: estado,
-                    imagen, // Este campo puede ser gestionado por el backend
-                    coordenadas: 0, // Esto puede ser gestionado por el backend o el mapa
-                  })
-              });
-              if (response.ok) {
-                  console.log('Evento creado');
-                  setErrorResponse('');
-                  goTo('/');
-              } else {
-                  console.log('Something went wrong');
-                  const json = (await response.json()) as AuthResponseError;
-                  setErrorResponse(json.body.error);
-                  return;
-              }
-          } catch (error) {
-              console.log(error);
-          }
+
+    e.preventDefault();
+    const formData = {
+      titulo,
+      descripcion,
+      fecha_inicio: fechaInicio,
+      fecha_fin: fechaFin,
+      capacidad,
+      ubicacion,
+      departamento,
+      organizador_id: user?.ident,
+      categoria_id: categoria,
+      estado_id: estado,
+      imagen, // Este campo puede ser gestionado por el backend
+      coordenadas: 0, // Esto puede ser gestionado por el backend o el mapa
+    };
+    console.log('Datos para crear el evento:', formData);
+
+    try {
+      const response = await fetch(`${API_URL}/createEvent`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          titulo,
+          descripcion,
+          fecha_inicio: fechaInicio,
+          fecha_fin: fechaFin,
+          capacidad,
+          ubicacion,
+          departamento,
+          organizador_id: user?.ident,
+          categoria_id: categoria,
+          estado_id: estado,
+          imagen, // Este campo puede ser gestionado por el backend
+          coordenadas: 0, // Esto puede ser gestionado por el backend o el mapa
+        })
+      });
+      if (response.ok) {
+        console.log('Evento creado');
+        setErrorResponse('');
+        goTo('/');
+      } else {
+        console.log('Something went wrong');
+        const json = (await response.json()) as AuthResponseError;
+        setErrorResponse(json.body.error);
+        return;
       }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const handleClose = () => {
     setIsOpen(false);  // Cerrar el modal
@@ -299,7 +299,7 @@ const CrearEventoModal: React.FC = () => {
                   </FormControl>
                 </Box>
                 <Box sx={{ flex: 1 }}>
-                <UploadImage onImagesUpload={handleImagesUpload} />
+                  <UploadImage onImagesUpload={handleImagesUpload} />
                 </Box>
               </Box>
 
