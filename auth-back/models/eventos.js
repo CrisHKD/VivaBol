@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
+  
   return sequelize.define('eventos', {
     id: {
       autoIncrement: true,
@@ -27,6 +28,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false,
       comment: "Debe ser mayor que cero"
+    },
+    expositor: {
+      type: DataTypes.STRING(255),
+      allowNull: true,  // Esto puede ser nulo, dependiendo de si el expositor está disponible
     },
     ubicacion: {
       type: DataTypes.STRING(255),

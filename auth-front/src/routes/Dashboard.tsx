@@ -5,6 +5,8 @@ import TableEventos from "../components/TablaEventos";
 import DepatamentoSelect from "../components/DepartamentoSelect";
 import CategoriaSelect from "../components/CategoriaSelect";
 import SearchComponent from "../components/CuadroBusqueda";
+import AgregarPatrocinador from "../layout/Patrocinadores";
+import UsersTable from "../components/TablaUsuarios"
 
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -23,6 +25,7 @@ import SendIcon from '@mui/icons-material/Send';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import StarBorder from '@mui/icons-material/StarBorder';
+
 
 
 const drawerWidth = 200;
@@ -104,6 +107,8 @@ export default function Dashboard() {
           <TableEventos />
         </Box>
         </>;
+      case 'Permisos':
+        return <UsersTable/>;
       case 'Literarios':
         return <Typography variant="h6">Información sobre Eventos literarios</Typography>;
       case 'Ferias':
@@ -114,6 +119,8 @@ export default function Dashboard() {
         return <Typography variant="h6">Información sobre Sociales</Typography>;
       case 'Deportivos':
         return <Typography variant="h6">Información sobre Deportivos</Typography>;
+      case 'Patrocinadores':
+        return <AgregarPatrocinador/>;
       default:
         return <Typography variant="h6">Selecciona un ítem de la lista</Typography>;
     };
@@ -141,18 +148,18 @@ export default function Dashboard() {
       component="nav"
       aria-labelledby="nested-list-subheader"
     >
-      <ListItemButton>
+      <ListItemButton onClick={() => handleItemClick('Permisos')}>
         <ListItemIcon>
           <SendIcon />
         </ListItemIcon>
         <ListItemText primary="Permisos" />
       </ListItemButton>
 
-      <ListItemButton>
+      <ListItemButton onClick={() => handleItemClick('Patrocinadores')}>
         <ListItemIcon>
           <DraftsIcon />
         </ListItemIcon>
-        <ListItemText primary="Usuarios" />
+        <ListItemText primary="Patrocinadores" />
       </ListItemButton>
 
       <ListItemButton onClick={handleClick}>

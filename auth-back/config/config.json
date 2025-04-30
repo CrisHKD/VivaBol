@@ -1,0 +1,23 @@
+{
+    "development": {
+      "dialect": "mysql",
+      "host": "localhost",
+      "username": "root",
+      "password": "admin",
+      "database": "vivabol"
+    },
+    "test": {
+      "dialect": "mysql",
+      "host": "localhost",
+      "username": "root",
+      "password": "admin",
+      "database": "vivabol"
+    },
+    "production": {
+      "dialect": "mysql",
+      "host": "localhost",
+      "username": "root",
+      "password": "admin",
+      "database": "vivabol"
+    }
+  }

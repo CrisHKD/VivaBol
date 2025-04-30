@@ -23,6 +23,8 @@ app.use('/api/upload', require('./routes/upload'));
 app.use('/api/createEvent', require('./routes/createEvent'));
 app.use('/api/comentarios', require('./routes/comentarios'));
 app.use('/api/favoritos', require('./routes/favoritos'));
+app.use('/api/patrocinadores', require('./routes/patrocinadores'));
+app.use('/api/usuarios', require('./routes/usuarios'));
 
 
 

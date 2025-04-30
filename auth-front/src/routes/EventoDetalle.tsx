@@ -24,12 +24,14 @@ const EventoDetalle = () => {
   const { id } = useParams();
   const [evento, setEvento] = useState<any>(null);
   const [imageUrls, setImageUrls] = useState<any[]>([]);
+  const [imgPatrocinators, setImgPatrocinators] = useState<any[]>([]);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const id_evento = Number(id);
   const auth = useAuth();
   const user = auth.getUser?.();
   const identidad = user?.ident;
   const itemData = [];
+
 
   const agregarFavorito = async () => {
     try {
@@ -75,6 +77,16 @@ const EventoDetalle = () => {
   }, [identidad, id_evento]);
 
   useEffect(() => {
+    axios.get(`${API_URL}/patrocinadores/eventos`, {
+      params: {
+        evento_id: id_evento
+      }
+    })
+      .then(res => setImgPatrocinators(res.data))
+      .catch(err => console.error('Error al obtener patrocinadores:', err));
+  }, [id_evento]);
+
+  useEffect(() => {
     axios.get(`${API_URL}/eventos/eventImg/${id}`)
       .then(res => setImageUrls(res.data))
       .catch(err => console.error('Error al obtener imagenes:', err));
@@ -86,7 +98,6 @@ const EventoDetalle = () => {
     }
     itemData.push({ img: evento.imagen, title: evento.titulo, author: '@hjrc33', featured: true, });
   };
-  console.log(imageUrls);
 
 
   return (
@@ -136,17 +147,23 @@ const EventoDetalle = () => {
                 </ImageList>
               </Box>
 
-              <Box sx={{
+              <Box
+                
+              sx={{
+                
                 width: '100%',
                 maxWidth: 600,
                 padding: 4,
                 backgroundColor: 'background.paper',
               }}>
+
                 <Box
                   sx={{
+
                     margin: 'auto',
                     padding: 4,
                     backgroundColor: 'background.paper',
+
                     borderRadius: 4,
                     boxShadow: 1
                   }}
@@ -170,12 +187,38 @@ const EventoDetalle = () => {
                       <strong>Ubicación:</strong> {evento.ubicacion}
                     </Typography>
                   </Box>
-
                   <Box>
                     <Typography variant="subtitle1" color="text.secondary">
                       <strong>Departamento:</strong> {evento.departamento}
                     </Typography>
                   </Box>
+                  <Box
+                    display="flex"
+                    gap={2}
+                    flexWrap="wrap"
+                    justifyContent="center"
+                    alignItems="center"
+                    mt={2}
+                  >
+                    {imgPatrocinators.map((patro, index) => (
+                      <Box key={index}>
+                        <img
+                          src={patro.logo_url}
+                          alt={patro.nombre}
+                          title={patro.nombre}
+                          style={{
+                            width: 50,
+                            height: 50,
+                            borderRadius: '50%',
+                            objectFit: 'cover',
+                            border: '1px solid #ccc' // opcional: borde gris sutil
+                          }}
+                        />
+                      </Box>
+                    ))}
+                  </Box>
+
+
                   <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
                     <Button
                       variant={isFavorite ? 'contained' : 'outlined'}

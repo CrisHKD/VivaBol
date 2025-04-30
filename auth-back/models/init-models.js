@@ -21,6 +21,9 @@ var _roles = require("./roles");
 var _sesiones = require("./sesiones");
 var _usuarios = require("./usuarios");
 var _verificacion_cuentas = require("./verificacion_cuentas");
+var _patrocinador = require("./patrocinador");
+var _patrocinador_evento = require("./patrocinador_evento");
+
 const sequelize = require('../lib/database');
 
 function initModels(sequelize) {
@@ -46,6 +49,8 @@ function initModels(sequelize) {
   var sesiones = _sesiones(sequelize, DataTypes);
   var usuarios = _usuarios(sequelize, DataTypes);
   var verificacion_cuentas = _verificacion_cuentas(sequelize, DataTypes);
+  var patrocinador = _patrocinador(sequelize, DataTypes);
+  var patrocinador_evento = _patrocinador_evento(sequelize, DataTypes);
 
   eventos.belongsTo(categorias_eventos, { as: "categorium", foreignKey: "categoria_id"});
   categorias_eventos.hasMany(eventos, { as: "eventos", foreignKey: "categoria_id"});
@@ -93,6 +98,13 @@ function initModels(sequelize) {
   usuarios.hasMany(sesiones, { as: "sesiones", foreignKey: "usuario_id"});
   verificacion_cuentas.belongsTo(usuarios, { as: "usuario", foreignKey: "usuario_id"});
   usuarios.hasMany(verificacion_cuentas, { as: "verificacion_cuenta", foreignKey: "usuario_id"});
+  patrocinador_evento.belongsTo(patrocinador, { foreignKey: 'patrocinador_id', as: 'patrocinador' });
+patrocinador.hasMany(patrocinador_evento, { foreignKey: 'patrocinador_id', as: 'patrocinios' });
+  eventos.belongsToMany(patrocinador, {through: 'Patrocinador_Evento',foreignKey: 'evento_id',});
+  patrocinador.belongsToMany(eventos, {through: 'Patrocinador_Evento',foreignKey: 'patrocinador_id'});
+  
+
+
 
   return {
     batallas,
@@ -117,6 +129,8 @@ function initModels(sequelize) {
     sesiones,
     usuarios,
     verificacion_cuentas,
+    patrocinador,
+    patrocinador_evento,
   };
 }
 
