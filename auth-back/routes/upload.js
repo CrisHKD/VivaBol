@@ -21,8 +21,6 @@ router.post('/banner', upload.single('image'), (req, res) => {
           return res.status(500).json({ error: 'Error al subir la imagen', details: err });
         }
   
-        // Si todo salió bien, devolver la URL de la imagen subida
-        console.log("imagen subidagen subida a baners");
         res.status(200).json({ imageUrl: result.secure_url });
       }
     ).end(file.buffer); // Usamos `.end()` para pasar el buffer a Cloudinary

@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { models } = require('../models/init-models');
 const usuarios = models.usuarios;
+const preferencias_usuario = models.preferencias_usuario;
 const Sequelize = require('sequelize');
 
 router.get('/', async (req, res) => {
@@ -29,7 +30,7 @@ router.get('/', async (req, res) => {
   
       // Si no se encontraron usuarios
       if (users.length === 0) {
-        return res.status(404).json({ error: 'No se encontraron usuarios' });
+        return res.status(200).json([]); 
       }
   
       // Retorna los usuarios encontrados
@@ -40,23 +41,32 @@ router.get('/', async (req, res) => {
     }
   });
 
-router.get('/:id', async (req, res) => {
+  router.get('/:id', async (req, res) => {
     try {
-      const { id } = req.params;  // Obtenemos el `id` del usuario desde los parámetros de la URL
+      const { id } = req.params;
   
-      // Buscar el usuario por su id
       const user = await usuarios.findOne({
         where: { id },
         attributes: ['id', 'nombres', 'apellidos', 'email', 'rol_id'],
+        include: [{
+          model: preferencias_usuario,
+          as: 'preferencias_usuarios',
+          attributes: ['idioma', 'notificaciones', 'notificaciones_email']
+        }]
       });
   
-      // Si no se encuentra el usuario
       if (!user) {
         return res.status(404).json({ error: 'Usuario no encontrado' });
       }
   
-      // Retorna el usuario encontrado
-      res.status(200).json(user);
+      // Convertir a booleanos los valores si existen preferencias
+      const result = user.toJSON();
+      if (result.preferencias) {
+        result.preferencias.notificaciones = !!result.preferencias.notificaciones;
+        result.preferencias.notificaciones_email = !!result.preferencias.notificaciones_email;
+      }
+  
+      res.status(200).json(result);
     } catch (err) {
       console.error('Error al obtener usuario por id:', err);
       res.status(500).json({ error: 'Error en el servidor' });

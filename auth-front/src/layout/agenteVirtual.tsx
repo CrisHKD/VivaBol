@@ -48,18 +48,15 @@ export default function ChatContainer() {
     return (
         <Box
             sx={{
-                position: 'fixed', // Fija el chat en la pantalla
-                top: 0,            // Mantiene el chat en la parte superior
-                left: 0,           // Empuja el chat hacia la izquierda
-                width: '100%',     // El chat ocupará todo el ancho de la pantalla
-                height: '100vh',   // El chat ocupará el 100% de la altura de la ventana
-                zIndex: 3010,      // Asegura que esté por encima del header (pero no cubre todo)
-                pointerEvents: 'none', // Esto evitará que el chat bloquee las interacciones con los elementos detrás
+                position: 'fixed',
+                bottom: 24,
+                right: 24,
+                width: '400px',
+                height: '600px',
+                zIndex: 3010,
             }}
         >
-            {/* Este es el contenedor donde se inyectará el chat */}
-            <div id="n8n-chat" style={{ width: '100%', height: '100%', borderRadius: '10px', pointerEvents: 'auto' }}></div>
+            <div id="n8n-chat" style={{ width: '100%', height: '100%' }}></div>
         </Box>
-
     );
 }

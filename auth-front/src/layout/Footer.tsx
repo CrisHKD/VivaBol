@@ -17,7 +17,6 @@ const Footer = () => { // Remover React.FC
         paddingTop: '50px ',
         paddingBottom: '50px ',
         paddingLeft: '0px 0',
-        marginTop: 'auto',       // Empuja el footer al final
       }}
     > 
       <Grid container spacing={4} sx={{ justifyContent: 'center' }}>

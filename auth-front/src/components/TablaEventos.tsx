@@ -202,7 +202,7 @@ export default function TablaEventos({ categoriaIds }: TableEventosProps) {
   return (
     <Paper sx={{ width: '100%', }}>
       {showModal && (
-            <EdicionEventos evento={selectedEvent} onClose={() => setShowModal(false)} />
+            <EdicionEventos ident={selectedEvent!.id} onClose={() => setShowModal(false)} />
           )}
       {isOpen && (
         <CrearEvento/>

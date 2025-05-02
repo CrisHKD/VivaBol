@@ -4,50 +4,84 @@ const eventos = models.eventos;
 const multimediaEventos = models.multimedia_eventos;
 const { Op } = require('sequelize');
 
+
 router.get('/', async (req, res) => {
   try {
     const pagina = parseInt(req.query.page) || 1;
     const porPagina = 9;
-    const categoriaId = req.query.categoria_id; // puede ser string o array
+
+    const { categoria_id, departamento, fecha, busqueda } = req.query;
 
     const where = {};
 
-    if (categoriaId) {
-      // Si se pasa un solo id: ?categoria_id=3
-      // Si se pasan múltiples: ?categoria_id=2&categoria_id=3
-      if (Array.isArray(categoriaId)) {
-        where.categoria_id = categoriaId.map(Number);
+    // Filtro por categoria (puede ser una o varias)
+    if (categoria_id) {
+      if (Array.isArray(categoria_id)) {
+        where.categoria_id = categoria_id.map(Number);
       } else {
-        where.categoria_id = parseInt(categoriaId);
+        where.categoria_id = parseInt(categoria_id);
       }
     }
 
-    const primerosEventos = await eventos.findAll({
+    // Filtro por departamento
+    if (departamento) {
+      where.departamento = departamento;
+    }
+
+    // Filtro por fecha mínima
+    if (fecha) {
+      const inicio = new Date(fecha);
+      const fin = new Date(fecha);
+      fin.setDate(fin.getDate() + 1); // siguiente día
+    
+      where.fecha_inicio = {
+        [Op.gte]: inicio,
+        [Op.lt]: fin,
+      };
+    }
+
+    // Filtro de búsqueda
+    if (busqueda) {
+      where[Op.or] = [
+        { titulo: { [Op.like]: `%${busqueda}%` } },
+        { descripcion: { [Op.like]: `%${busqueda}%` } },
+      ];
+    }
+
+    // Obtener el total de registros
+    const totalEventos = await eventos.count({ where });
+    const totalPaginas = Math.ceil(totalEventos / porPagina);
+
+    // Obtener los eventos paginados
+    const eventosFiltrados = await eventos.findAll({
       where,
-      attributes: ['id', 
-        'titulo', 
+      attributes: [
+        'id',
+        'titulo',
         'descripcion',
-        'fecha_inicio', 
-        'ubicacion', 
-        'estado_id', 
+        'fecha_inicio',
+        'ubicacion',
+        'estado_id',
         'imagen',
         'departamento',
         'categoria_id',
-        'capacidad'],
+        'capacidad',
+      ],
       limit: porPagina,
       offset: (pagina - 1) * porPagina,
+      order: [['fecha_inicio', 'DESC']],
     });
 
-    if (primerosEventos.length > 0) {
-      res.status(200).json(primerosEventos);
-    } else {
-      res.status(404).json({ message: 'No se encontraron eventos' });
-    }
+    res.status(200).json({
+      eventos: eventosFiltrados,
+      totalPaginas,
+    });
   } catch (error) {
     console.error('Error al obtener los eventos:', error);
     res.status(500).json({ error: 'Error en el servidor' });
   }
 });
+
 
 router.get('/todos', async (req, res) => {
   try {
@@ -89,7 +123,6 @@ router.get('/todos', async (req, res) => {
 router.get('/por-fecha', async (req, res) => {
   try {
     const fecha = req.query.fecha;
-    console.log('Fecha recibida:', fecha);
 
     if (!fecha) {
       return res.status(400).json({ error: 'Debe proporcionar una fecha en el formato YYYY-MM-DD' });

@@ -12,11 +12,13 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
-
+import { useState } from 'react';
 import { useAuth } from "../auth/AuthProvider";
 import { Link } from "react-router-dom";
 import { API_URL } from "../auth/constants";
 import { logoPath } from "../auth/constants";
+
+import UserSettingsModal from "../components/ConfiguracionUsuario";
 
 
 //IMPORTAR EL TEMA
@@ -24,7 +26,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from '../layout/DefaultTheme';
 
-const pages = ['Eventos', 'Calendario', 'Historia y cultura', 'Galeria'];
+const pages = ['Eventos', 'Calendario', 'Galeria'];
 
 interface DefaultLayoutProps {
   children: React.ReactNode;
@@ -33,7 +35,7 @@ interface DefaultLayoutProps {
 export default function DefaultHeader({ children }: DefaultLayoutProps) {
   const auth = useAuth();
   const user = auth.getUser?.();
-
+  const [openUserSettings, setOpenUserSettings] = useState(false);
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -176,10 +178,6 @@ export default function DefaultHeader({ children }: DefaultLayoutProps) {
                       <Link to="/eventos" style={{ textDecoration: 'none', color: 'inherit' }}>
                         {page}
                       </Link>
-                    ) : page === 'Historia y cultura' ? (
-                      <Link to="/historia" style={{ textDecoration: 'none', color: 'inherit' }}>
-                        {page}
-                      </Link>
                     ) : page === 'Calendario' ? (
                       <Link to="/calendario" style={{ textDecoration: 'none', color: 'inherit' }}>
                         {page}
@@ -227,6 +225,7 @@ export default function DefaultHeader({ children }: DefaultLayoutProps) {
                       <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                         <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
                       </IconButton>
+                      
                     </Tooltip>
                     <Menu
                       sx={{ mt: '45px' }}
@@ -244,9 +243,13 @@ export default function DefaultHeader({ children }: DefaultLayoutProps) {
                       open={Boolean(anchorElUser)}
                       onClose={handleCloseUserMenu}
                     >
+                      <MenuItem href="/" key="userSettings" onClick={() => setOpenUserSettings(true)}>
+                        <Typography sx={{ textAlign: 'center' }}>Cuenta</Typography>
+                      </MenuItem>
                       <MenuItem href="/" key="signout" onClick={handleSignOut}>
                         <Typography sx={{ textAlign: 'center' }}>Cerrar sesion</Typography>
                       </MenuItem>
+                      
                     </Menu>
                   </>
                 )}
@@ -254,7 +257,10 @@ export default function DefaultHeader({ children }: DefaultLayoutProps) {
             </Toolbar>
           </Container>
         </AppBar>
-        <main>{children}</main>
+        <main>
+          {openUserSettings && <UserSettingsModal onClose={() => setOpenUserSettings(false)} />}
+          {children}
+          </main>
       </ThemeProvider>
     </>
   );

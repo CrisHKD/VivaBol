@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Box, Button, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { ListItemText, Checkbox, Box, Button, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';  // Icono para el botón de cerrar
 import { API_URL } from "../auth/constants";
 import UploadImage from '../routes/UploadImage';
 import { AuthResponseError } from "../types/types";
 import { useNavigate } from "react-router-dom";
-
+import axios from "axios";
 
 import { useAuth } from '../auth/AuthProvider';
 
@@ -24,16 +24,20 @@ const CrearEventoModal: React.FC = () => {
   const [categoria, setCategoria] = useState<number>(0);
   const [estado, setEstado] = useState<number>(0);
   const [imagen, setImagen] = useState<string[]>([]);
+  const [expositor, setExpositor] = useState('');
+  const [error, setError] = useState('');
+
+  const [patrocinadores, setPatrocinadores] = useState<any[]>([]);
+  const [patrocinadoresSeleccionados, setPatrocinadoresSeleccionados] = useState<number[]>([]);
+
   const auth = useAuth();
   const user = auth.getUser?.();
   const identidad = user?.ident;
-  console.log("Identidad usuario: " + identidad);
 
   const [errorResponse, setErrorResponse] = useState('');
 
   const handleImagesUpload = (urls: string[]) => {
     setImagen(urls);
-    console.log('Todas las URLs de las imágenes subidas:', urls);
   };
 
   // Listado de departamentos
@@ -89,15 +93,15 @@ const CrearEventoModal: React.FC = () => {
           titulo,
           descripcion,
           fecha_inicio: fechaInicio,
-          fecha_fin: fechaFin,
           capacidad,
           ubicacion,
           departamento,
           organizador_id: user?.ident,
           categoria_id: categoria,
           estado_id: estado,
+          expositor,
           imagen, // Este campo puede ser gestionado por el backend
-          coordenadas: 0, // Esto puede ser gestionado por el backend o el mapa
+          patrocinadores: patrocinadoresSeleccionados,
         })
       });
       if (response.ok) {
@@ -118,6 +122,23 @@ const CrearEventoModal: React.FC = () => {
   const handleClose = () => {
     setIsOpen(false);  // Cerrar el modal
   };
+
+
+
+  useEffect(() => {
+    const fetchPatrocinadores = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/patrocinadores`);
+        setPatrocinadores(response.data);
+        //console.log("-------Patrocinadores-------------------", response.data);
+      } catch (err) {
+        console.error('Error al obtener los patrocinadores:', err);
+        setError('Hubo un problema al cargar los patrocinadores.');
+      }
+    };
+
+    fetchPatrocinadores();
+  }, []);
 
   return (
     <>
@@ -168,7 +189,7 @@ const CrearEventoModal: React.FC = () => {
             <h2>Crear Evento</h2>
             <form onSubmit={handleSubmit}>
               <Box sx={{ display: 'flex', gap: 2 }}>
-                <div>
+                <Box sx={{ width: '35%' }}>
                   <TextField
                     label="Título"
                     name="titulo"
@@ -187,8 +208,8 @@ const CrearEventoModal: React.FC = () => {
                     rows={4}
                     margin="normal"
                   />
-                </div>
-                <div>
+                </Box>
+                <Box sx={{ width: '60%' }}>
                   <TextField
                     label="Fecha de inicio"
                     type="datetime-local"
@@ -200,14 +221,14 @@ const CrearEventoModal: React.FC = () => {
                     InputLabelProps={{ shrink: true }}
                   />
                   <TextField
-                    label="Fecha de fin"
-                    type="datetime-local"
-                    name="fecha_fin"
-                    value={fechaFin}
-                    onChange={(e) => setFechaFin(e.target.value)}
+                    label="Expositor"
+                    name="expositor"
+                    value={expositor}
+                    onChange={(e) => setExpositor(e.target.value)}
                     fullWidth
+                    multiline
+                    rows={1}
                     margin="normal"
-                    InputLabelProps={{ shrink: true }}
                   />
                   <TextField
                     label="Capacidad"
@@ -218,7 +239,38 @@ const CrearEventoModal: React.FC = () => {
                     fullWidth
                     margin="normal"
                   />
-                </div>
+                  <FormControl fullWidth>
+                    <InputLabel id="patrocinadores-label">Patrocinadores</InputLabel>
+                    <Select
+                      labelId="patrocinadores-label"
+                      multiple
+                      value={patrocinadoresSeleccionados}
+                      onChange={(e) => setPatrocinadoresSeleccionados(e.target.value as number[])}
+                      renderValue={(selected) =>
+                        patrocinadores
+                          .filter((p) => selected.includes(p.id))
+                          .map((p) => p.nombre)
+                          .join(", ")
+                      }
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            maxHeight: 300, // Altura máxima del menú desplegable
+                            width: 250      // Ancho del menú
+                          }
+                        }
+                      }}
+                    >
+                      {patrocinadores.map((p) => (
+                        <MenuItem key={p.id} value={p.id}>
+                          <Checkbox checked={patrocinadoresSeleccionados.includes(p.id)} />
+                          <ListItemText primary={p.nombre} />
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                </Box>
               </Box>
 
 
@@ -311,9 +363,9 @@ const CrearEventoModal: React.FC = () => {
                   Cancelar
                 </Button>
               </Box>
-
             </form>
           </Box>
+
         </Box>
       )}
     </>

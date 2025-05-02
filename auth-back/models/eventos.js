@@ -22,7 +22,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     fecha_fin: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: true
     },
     capacidad: {
       type: DataTypes.INTEGER,

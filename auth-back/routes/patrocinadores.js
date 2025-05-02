@@ -105,7 +105,7 @@ router.get('/', async (req, res) => {
       const evento = await eventos.findByPk(evento_id, {
         include: {
           model: patrocinadores,
-          attributes: ['nombre', 'logo_url'],
+          attributes: ['id','nombre', 'logo_url'],
           through: { attributes: [] }, // oculta la tabla intermedia
         }
       });
@@ -113,8 +113,8 @@ router.get('/', async (req, res) => {
       if (!evento) {
         return res.status(404).json({ error: 'Evento no encontrado' });
       }
-      console.log(evento,patrocinadores);
       res.json(evento.patrocinadores.map(p => ({
+        id:p.id,
         nombre: p.nombre,
         logo_url: p.logo_url
       })));
