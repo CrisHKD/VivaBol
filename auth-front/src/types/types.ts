@@ -24,6 +24,8 @@ export interface User {
     birthDate: string,
     country:string,
     gender: string,
+
+    foto_perfil:string
     
 }
 

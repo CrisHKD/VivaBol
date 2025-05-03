@@ -6,6 +6,7 @@ import {
 import axios from 'axios';
 import { API_URL } from "../auth/constants";
 import EditUserForm from '../components/EditarUsuario';
+import AgregarOrganizadorForm from '../components/AgregarOrganizador';
 
 const UsersTable = () => {
   const [users, setUsers] = useState<any[]>([]);
@@ -16,6 +17,7 @@ const UsersTable = () => {
   const [errorMsg, setErrorMsg] = useState('');
 
   const [openEditForm, setOpenEditForm] = useState(false);
+  const [openOrgForm, setOpenOrgForm] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
   const handleEditClick = (userId: number) => {
@@ -23,14 +25,20 @@ const UsersTable = () => {
     setOpenEditForm(true);
   };
 
+  const handleOrgClick = (userId: number) => {
+    setSelectedUserId(userId);
+    setOpenOrgForm(true);
+  };
+
   const fetchUsers = async () => {
     setLoading(true);
     setErrorMsg('');
     try {
       const response = await axios.get(`${API_URL}/usuarios`, {
-        params: { nombre, apellido, email },
+        params: { nombre, apellido, email, },
       });
       setUsers(response.data);
+      console.log(response.data);
     } catch (error: any) {
       if (error.response && error.response.status === 404) {
         setUsers([]); // asegúrate de vaciar el arreglo
@@ -52,6 +60,20 @@ const UsersTable = () => {
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       fetchUsers();
+    }
+  };
+
+  const handleEliminarOrganizador = async (usuarioId: number) => {
+    try {
+      await axios.delete(`${API_URL}/usuarios/organizadores`, {
+        data: { usuario_id: usuarioId },
+      });
+      alert("Organizador eliminado correctamente");
+      fetchUsers();
+      // Opcional: recargar usuarios
+    } catch (err) {
+      console.error("Error al eliminar organizador:", err);
+      alert("No se pudo eliminar el organizador");
     }
   };
 
@@ -102,6 +124,10 @@ const UsersTable = () => {
         <EditUserForm userId={selectedUserId} onClose={() => setOpenEditForm(false)} />
       )}
 
+      {openOrgForm && selectedUserId !== null && (
+        <AgregarOrganizadorForm usuarioId={selectedUserId} onClose={() => {setOpenOrgForm(false);fetchUsers();}} />
+      )}
+
       {errorMsg && <Box mb={2} color="error.main">{errorMsg}</Box>}
 
       <TableContainer component={Paper}>
@@ -113,6 +139,7 @@ const UsersTable = () => {
               <TableCell>Email</TableCell>
               <TableCell>Rol ID</TableCell>
               <TableCell>Opciones</TableCell>
+              <TableCell>Organizador</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -133,6 +160,25 @@ const UsersTable = () => {
                     >
                       Editar
                     </Button>
+                  </TableCell>
+                  <TableCell>
+                    {user.esOrganizador ? (
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => handleEliminarOrganizador(user.id)} // Eliminar
+                      >
+                        Borrar org.
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => handleOrgClick(user.id)} // Registrar
+                      >
+                        Hacer org.
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))

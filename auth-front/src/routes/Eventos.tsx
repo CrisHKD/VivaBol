@@ -108,7 +108,7 @@ export default function Eventos() {
   return (
     <>
       <DefaultHeader>
-        <Box sx={{ width: '100%', padding: '36px' }} />
+        <Box sx={{ width: '100%', minHeight:"100%", padding: '36px' }} />
 
         {/* Filtros directamente aquí */}
         

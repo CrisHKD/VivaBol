@@ -10,6 +10,7 @@ import Calendario from './routes/Calendario.tsx';
 import ProtectedRoute from './routes/ProtectedRoute.tsx';
 import EventoDetalle from './routes/EventoDetalle.tsx';
 import { AuthProvider } from './auth/AuthProvider.tsx';
+import Inicio from './routes/Inicio.tsx'
 
 import {CssBaseline} from '@mui/material';
 
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
   {
     path: '/signup',
     element: <Signup />,
+  },
+  {
+    path: '/inicio',
+    element: <Inicio />,
   },
   {
     path: '/eventos',

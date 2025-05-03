@@ -51,8 +51,6 @@ export default function ChatContainer() {
                 position: 'fixed',
                 bottom: 24,
                 right: 24,
-                width: '400px',
-                height: '600px',
                 zIndex: 3010,
             }}
         >

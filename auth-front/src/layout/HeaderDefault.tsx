@@ -26,7 +26,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from '../layout/DefaultTheme';
 
-const pages = ['Eventos', 'Calendario', 'Galeria'];
+const pages = ['Inicio','Eventos', 'Calendario', 'Galeria'];
 
 interface DefaultLayoutProps {
   children: React.ReactNode;
@@ -155,7 +155,7 @@ export default function DefaultHeader({ children }: DefaultLayoutProps) {
                 VIVABOL2
               </Typography>
               <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                {user?.rol !== 1 ? (
+                {user?.rol === 2 ? (
                   // Vista para Usuario común (rol_id = 1)
                   <Button
                     key={"Dashboard"}
@@ -180,6 +180,10 @@ export default function DefaultHeader({ children }: DefaultLayoutProps) {
                       </Link>
                     ) : page === 'Calendario' ? (
                       <Link to="/calendario" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        {page}
+                      </Link>
+                    ) : page === 'Inicio' ? (
+                      <Link to="/inicio" style={{ textDecoration: 'none', color: 'inherit' }}>
                         {page}
                       </Link>
                     ) : (
@@ -223,7 +227,7 @@ export default function DefaultHeader({ children }: DefaultLayoutProps) {
                   <>
                     <Tooltip title="Open settings">
                       <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                        <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
+                        <Avatar alt="User Avatar" src={user?.foto_perfil}/>
                       </IconButton>
                       
                     </Tooltip>

@@ -114,6 +114,7 @@ export default function Calendario() {
                         justifyContent: 'center',
                         padding: '40px',   // Espaciado superior
                         backgroundColor: '#f5f5f5',
+                        minHeight:'60vh',
                         display: 'flex',
                         gap: 3,
                     }

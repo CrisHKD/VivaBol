@@ -6,6 +6,7 @@ function getUserInfo(user) {
     lastName: user.apellidos,
     country: user.pais,
     ident:user.id,
+    foto_perfil:user.foto_perfil
   };
 };
 

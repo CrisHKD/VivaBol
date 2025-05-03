@@ -111,14 +111,17 @@ const EventoDetalle = () => {
       />
       <Box
         sx={{
-          width: '100%',
-          justifyContent: 'center',
-          padding: '40px',   // Espaciado superior
+          display: 'flex',               // Habilita el modelo flexbox
+          flexDirection: 'column',       // Asegura que los hijos se apilen verticalmente
+          alignItems: 'center',          // Centra horizontalmente
+          justifyContent: 'center',      // Centra verticalmente (si aplica en un contenedor con altura definida)
+          maxWidth: '100%',
+          padding: '40px',
           backgroundColor: '#f5f5f5',
           '& > :not(style)': {
             m: 1,
-            width: '100%',
-            height: "auto",
+            width: '80%',
+            height: 'auto',
           },
         }}
       >
@@ -130,7 +133,15 @@ const EventoDetalle = () => {
             <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
 
 
-              <Box sx={{ width: '50%', padding: '30px' }}>
+              <Box
+                sx={{
+                  width: '45%',
+                  padding: '30px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'flex-end',      // Centrado horizontal
+                }}
+              >
                 <ImageList
                   gap={1}
                 >
@@ -148,18 +159,17 @@ const EventoDetalle = () => {
               </Box>
 
               <Box
-                
-              sx={{
-                
-                width: '100%',
-                maxWidth: 600,
-                padding: 4,
-                backgroundColor: 'background.paper',
-              }}>
+                sx={{
+                  width: '45%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',     // Centrado horizontal
+                }}
+              >
 
                 <Box
                   sx={{
-
+                    width: '100%',
                     margin: 'auto',
                     padding: 4,
                     backgroundColor: 'background.paper',
