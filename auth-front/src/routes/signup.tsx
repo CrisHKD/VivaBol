@@ -115,7 +115,6 @@ export default function Signup() {
                     <CardContent>
                         <Box
                             sx={{
-
                                 width: '100%',
                                 justifyContent: 'center', // Centrado horizontal
                                 padding: '36px',          // Espaciado alrededor de los componentes
@@ -161,7 +160,6 @@ export default function Signup() {
                                 />
                             </Box>
                             <TextField
-                                //id="outlined-basic"
                                 label="Correo eletronico"
                                 variant="outlined"
                                 value={email}
@@ -199,9 +197,9 @@ export default function Signup() {
                                 sx={{ width: 300 }} // Ajusta el ancho si es necesario
                             />
                             <ReCAPTCHA
-                                sitekey="6Lc6i_wqAAAAADn9mUgqMjnyTuzaArjzFO_zL9Lb"
+                                sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
                                 onChange={onChangeCaptcha}
-                            />
+                            />,
 
                             <FormControl sx={{ m: 1, width: 300 }} variant="outlined">
                                 <InputLabel htmlFor="outlined-adornment-password">Contraseña</InputLabel>

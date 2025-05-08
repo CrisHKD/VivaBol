@@ -12,6 +12,7 @@ const AuthContext = createContext({
     saveUser: (userData: AuthResponse) => {},
     getRefreshToken: () => {},
     getUser: () => ({} as User | undefined),
+    setImage: (url:string) => {},
     signOut: () => {},
 });
 
@@ -142,6 +143,25 @@ export function AuthProvider({children}: AuthProviderProps){
         return user;
     }
 
+    function setImage(url:string){
+        const data = {
+            name:user!.name,
+            lastName:user!.lastName,
+            birthDate:user!.birthDate,
+            country:user!.country,
+            email:user!.email,
+            foto_perfil:url,
+            gender:user!.gender,
+            id:user!.id,
+            ident:user!.ident,
+            rol:user!.rol,
+            username:user!.username,
+        }
+        setUser(data);
+        return {};
+    }
+    
+
     return (
         <AuthContext.Provider value={{
                 isAuthenticated,
@@ -149,6 +169,7 @@ export function AuthProvider({children}: AuthProviderProps){
                 saveUser,
                 getRefreshToken,
                 getUser,
+                setImage,
                 signOut,
             }}>
             {isLoading? <div>Loading...</div>: children}

@@ -16,7 +16,7 @@ export default function ProtectedRoute({ allowedRoleIds }: ProtectedRouteProps) 
 
   // Verifica si el rol_id está permitido
   if (!user || user.rol === undefined || !allowedRoleIds.includes(user.rol)) {
-    return <Navigate to="/eventos" replace />;
+    return <Navigate to="/inicio" replace />;
   }
 
   return <Outlet />;

@@ -1,7 +1,11 @@
 const router = require('express').Router();
+const favoritos_eventos = require('../models/favoritos_eventos');
 const { models } = require('../models/init-models');
 const eventos = models.eventos;
 const multimediaEventos = models.multimedia_eventos;
+const comentarios_eventos = models.comentarios_eventos;
+const favoritos_eventos2 = models.favoritos_eventos;
+
 const { Op } = require('sequelize');
 
 
@@ -85,14 +89,26 @@ router.get('/', async (req, res) => {
 
 router.get('/todos', async (req, res) => {
   try {
-    const categoriaId = req.query.categoria_id;
+    const { categoria_id, departamento, fecha_inicio, fecha_fin } = req.query;
     const where = {};
 
-    if (categoriaId) {
-      const ids = Array.isArray(categoriaId)
-        ? categoriaId.map(Number)
-        : [parseInt(categoriaId)];
+    // Filtrar por categoria_id (puede ser un solo valor o varios)
+    if (categoria_id) {
+      const ids = Array.isArray(categoria_id)
+        ? categoria_id.map(Number)
+        : [parseInt(categoria_id)];
       where.categoria_id = { [Op.in]: ids };
+    }
+
+    // Filtrar por departamento
+    if (departamento) {
+      where.departamento = departamento;
+    }
+
+    // Filtrar por fecha_inicio (y fecha_fin si es necesario)
+    if (fecha_inicio) {
+      const fechaInicio = new Date(fecha_inicio); // Convertir a formato de fecha
+      where.fecha_inicio = { [Op.gte]: fechaInicio }; // Buscar desde la fecha proporcionada
     }
 
     const eventosTodos = await eventos.findAll({
@@ -113,12 +129,12 @@ router.get('/todos', async (req, res) => {
     });
 
     res.status(200).json({ total: eventosTodos.length, eventos: eventosTodos });
-
   } catch (error) {
     console.error('Error al obtener todos los eventos:', error);
     res.status(500).json({ error: 'Error en el servidor' });
   }
 });
+
 
 router.get('/por-fecha', async (req, res) => {
   try {
@@ -185,6 +201,31 @@ router.get('/:id', async (req, res) => {
       res.status(500).json({ error: 'Error en el servidor' });
     }
   });
+
+  router.delete('/:id', async (req, res) => {
+    try {
+      const id = req.params.id;
+  
+      // Buscar el evento por ID
+      const evento = await eventos.findByPk(id);
+  
+      if (!evento) {
+        return res.status(404).json({ error: 'Evento no encontrado' });
+      }
+  
+      // Eliminar los registros relacionados en comentarios_eventos
+      await comentarios_eventos.destroy({ where: { evento_id: id } });
+      await favoritos_eventos2.destroy({ where: { evento_id: id } });
+  
+      // Ahora eliminar el evento
+      await evento.destroy();
+  
+      res.status(200).json({ message: 'Evento y registros relacionados eliminados exitosamente' });
+    } catch (error) {
+      console.error('Error al eliminar el evento:', error);
+      res.status(500).json({ error: 'Error en el servidor' });
+    }
+  });  
 
 
 

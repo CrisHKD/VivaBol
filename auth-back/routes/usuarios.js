@@ -59,6 +59,32 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: 'Error en el servidor' });
   }
 });
+router.get('/organizadores', async (req, res) => {
+  try {
+    const listaOrganizadores = await organizadores.findAll({
+      attributes: [
+        'id',
+        'usuario_id',
+        'nombre_institucion',
+        'descripcion',
+        'sitio_web',
+        'telefono_contacto',
+      ],
+      include: [
+        {
+          model: usuarios,
+          as: 'usuario', // asegúrate de que coincida con tu alias en la relación
+          attributes: ['nombres', 'apellidos', 'email'],
+        },
+      ],
+    });
+
+    res.status(200).json(listaOrganizadores);
+  } catch (error) {
+    console.error('Error al obtener organizadores:', error);
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+});
 
   router.post('/cambiarImagen', upload.single('imagen'), async (req, res) => {
     const { file } = req;
@@ -92,11 +118,19 @@ router.get('/', async (req, res) => {
           // Actualiza la URL en la base de datos
           usuario.foto_perfil = result.secure_url;
           await usuario.save();
-  
+          
+          console.log("res---------img",{
+            mensaje: 'Imagen de perfil actualizada exitosamente',
+            imagenUrl: result.secure_url,  // URL pública (segura)
+            imagenUrlOriginal: result.url   // URL original
+          })
+
           res.status(200).json({
             mensaje: 'Imagen de perfil actualizada exitosamente',
-            imagenUrl: result.secure_url,
+            imagenUrl: result.secure_url,  // URL pública (segura)
+            imagenUrlOriginal: result.url   // URL original
           });
+          
         }
       ).end(file.buffer);
     } catch (error) {
@@ -169,6 +203,9 @@ router.get('/', async (req, res) => {
       res.status(500).json({ error: 'Error en el servidor' });
     }
   });
+
+  
+  
 
   router.post('/organizadores', async (req, res) => {
     try {

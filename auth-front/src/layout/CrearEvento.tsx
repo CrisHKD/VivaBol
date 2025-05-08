@@ -30,6 +30,9 @@ const CrearEventoModal: React.FC = () => {
   const [patrocinadores, setPatrocinadores] = useState<any[]>([]);
   const [patrocinadoresSeleccionados, setPatrocinadoresSeleccionados] = useState<number[]>([]);
 
+  const [organizadores, setOrganizadores] = useState<any[]>([]);
+  const [organizadorSeleccionado, setOrganizadorSeleccionado] = useState<number>();
+
   const auth = useAuth();
   const user = auth.getUser?.();
   const identidad = user?.ident;
@@ -96,7 +99,7 @@ const CrearEventoModal: React.FC = () => {
           capacidad,
           ubicacion,
           departamento,
-          organizador_id: user?.ident,
+          organizador_id: organizadorSeleccionado,
           categoria_id: categoria,
           estado_id: estado,
           expositor,
@@ -123,7 +126,18 @@ const CrearEventoModal: React.FC = () => {
     setIsOpen(false);  // Cerrar el modal
   };
 
+  useEffect(() => {
+    const fetchOrganizadores = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/usuarios/organizadores`);
+        setOrganizadores(res.data);
+      } catch (error) {
+        console.error("Error al cargar organizadores:", error);
+      }
+    };
 
+    fetchOrganizadores();
+  }, []);
 
   useEffect(() => {
     const fetchPatrocinadores = async () => {
@@ -205,7 +219,7 @@ const CrearEventoModal: React.FC = () => {
                     onChange={(e) => setDescripcion(e.target.value)}
                     fullWidth
                     multiline
-                    rows={4}
+                    rows={10}
                     margin="normal"
                   />
                 </Box>
@@ -268,6 +282,30 @@ const CrearEventoModal: React.FC = () => {
                         </MenuItem>
                       ))}
                     </Select>
+                    <FormControl fullWidth margin="normal">
+                      <InputLabel>Organizador</InputLabel>
+                      <Select
+                        label="Organizador"
+                        name="organizador"
+                        value={organizadorSeleccionado ?? ""}
+                        onChange={(e) =>
+                          setOrganizadorSeleccionado(Number(e.target.value))
+                        }
+                        MenuProps={{
+                          PaperProps: {
+                            style: {
+                              zIndex: 1500,
+                            },
+                          },
+                        }}
+                      >
+                        {organizadores.map((org) => (
+                          <MenuItem key={org.id} value={org.usuario_id}>
+                            {org.nombre_institucion}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </FormControl>
 
                 </Box>

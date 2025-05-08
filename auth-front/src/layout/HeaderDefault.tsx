@@ -26,7 +26,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from '../layout/DefaultTheme';
 
-const pages = ['Inicio','Eventos', 'Calendario', 'Galeria'];
+const pages = ['Inicio','Eventos', 'Calendario'];
 
 interface DefaultLayoutProps {
   children: React.ReactNode;

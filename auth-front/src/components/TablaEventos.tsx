@@ -12,6 +12,7 @@ import axios from 'axios';
 import { API_URL } from "../auth/constants";
 import { useEffect } from 'react';
 import Button from '@mui/material/Button';
+import {Box, TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 
 import EdicionEventos from '../layout/EdicionEventos';
 import CrearEvento from '../layout/CrearEvento';
@@ -32,6 +33,17 @@ const estados = [
   { id: 1, nombre: "Publicado" },
   { id: 2, nombre: "Borrador" },
   { id: 3, nombre: "Cancelado" },
+];
+const departamentos = [
+  "La Paz", 
+  "Oruro", 
+  "Potosi", 
+  "Santa Cruz", 
+  "Beni", 
+  "Pando", 
+  "Tarija", 
+  "Cochabamba",
+  "Chuquisaca"
 ];
 
 interface Column {
@@ -134,6 +146,8 @@ interface TableEventosProps {
 
 export default function TablaEventos({ categoriaIds }: TableEventosProps) {
   //Paginacion
+  const [departamentoFiltro, setDepartamentoFiltro] = useState<string>('');
+  const [fechaFiltro, setFechaFiltro] = useState<string>('');
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -164,6 +178,45 @@ export default function TablaEventos({ categoriaIds }: TableEventosProps) {
     setPage(0);
   };
   
+  const fetchEventos = async () => {
+    try {
+      const categoriaParams = categoriaIds.map(id => `categoria_id=${id}`).join('&');
+      const departamentoParam = departamentoFiltro ? `departamento=${departamentoFiltro}` : '';
+      const fechaParam = fechaFiltro ? `fecha_inicio=${fechaFiltro}` : '';
+      console.log("Fhecha_ini", fechaFiltro);
+      
+      // Unir los parámetros de búsqueda
+      const queryParams = [categoriaParams, departamentoParam, fechaParam].filter(Boolean).join('&');
+      const res = await axios.get(`${API_URL}/eventos/todos?${queryParams}`);
+      
+      const eventos = res.data.eventos;
+      const formatted = eventos.map((e: any) =>
+        createData(
+          e.id,
+          e.titulo,
+          e.descripcion ? e.descripcion.slice(0, 20) + (e.descripcion.length > 20 ? '...' : '') : 'Sin descripción',
+          new Date(e.fecha_inicio).toLocaleDateString('es-ES', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+          }),
+          e.capacidad || 0,
+          e.departamento || 'N/D',
+          e.ubicacion || 'N/D',
+          e.categoria_id || 'N/D',
+          e.estado_id || 'N/D'
+        )
+      );
+
+      setRows(formatted);
+    } catch (err) {
+      console.error('Error al obtener eventos:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchEventos();
+  }, [categoriaIds, departamentoFiltro, fechaFiltro]);
 
   useEffect(() => {
     const fetchEventos = async () => {
@@ -199,6 +252,8 @@ export default function TablaEventos({ categoriaIds }: TableEventosProps) {
     fetchEventos();
   }, [categoriaIds]);
 
+
+
   return (
     <Paper sx={{ width: '100%', }}>
       {showModal && (
@@ -207,7 +262,8 @@ export default function TablaEventos({ categoriaIds }: TableEventosProps) {
       {isOpen && (
         <CrearEvento/>
       )}
-      <TableContainer sx={{ maxHeight: 440 }}>
+       
+      <TableContainer sx={{ maxHeight: 600 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>

@@ -64,6 +64,7 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({ onClose }) => {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setImage(res.data.imagenUrl);
+      auth.setImage(res.data.imagenUrl);
       setOpenImagenModal(false);
       setImageFile(null);
       setImageUrl(null);

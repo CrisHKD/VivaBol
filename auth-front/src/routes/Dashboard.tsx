@@ -116,8 +116,6 @@ export default function Dashboard() {
               paddingRight: '5px'           // Espaciado alrededor de los componentes
             }}
           >
-            <DepatamentoSelect />
-            <SearchComponent />
           </Box>
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
             <TableEventos categoriaIds={categorias} />
@@ -139,8 +137,6 @@ export default function Dashboard() {
               paddingRight: '5px'           // Espaciado alrededor de los componentes
             }}
           >
-            <DepatamentoSelect />
-            <SearchComponent />
           </Box>
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
             <TableEventos categoriaIds={categorias} />
@@ -160,8 +156,6 @@ export default function Dashboard() {
               paddingRight: '5px'           // Espaciado alrededor de los componentes
             }}
           >
-            <DepatamentoSelect />
-            <SearchComponent />
           </Box>
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
             <TableEventos categoriaIds={categorias} />
@@ -181,8 +175,6 @@ export default function Dashboard() {
               paddingRight: '5px'           // Espaciado alrededor de los componentes
             }}
           >
-            <DepatamentoSelect />
-            <SearchComponent />
           </Box>
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
             <TableEventos categoriaIds={categorias} />
@@ -202,8 +194,6 @@ export default function Dashboard() {
               paddingRight: '5px'           // Espaciado alrededor de los componentes
             }}
           >
-            <DepatamentoSelect />
-            <SearchComponent />
           </Box>
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
             <TableEventos categoriaIds={categorias} />
@@ -223,8 +213,6 @@ export default function Dashboard() {
               paddingRight: '5px'           // Espaciado alrededor de los componentes
             }}
           >
-            <DepatamentoSelect />
-            <SearchComponent />
           </Box>
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
             <TableEventos categoriaIds={categorias} />
@@ -248,7 +236,7 @@ export default function Dashboard() {
   }
   return (
     <>
-
+  
       <DefaultHeader >
 
         <Box sx={{ display: 'flex' }}>

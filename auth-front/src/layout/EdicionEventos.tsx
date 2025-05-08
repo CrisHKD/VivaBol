@@ -50,6 +50,27 @@ const EdicionEventos: React.FC<FixedCenterBoxProps> = ({ ident, onClose }) => {
   const [patrocinadores, setPatrocinadores] = useState<any[]>([]);
   const [patrocinadoresSeleccionados, setPatrocinadoresSeleccionados] = useState<number[]>([]);
 
+  const handleDelete = async () => {
+    try {
+      // Confirmar antes de eliminar
+      const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este evento?");
+      if (!confirmDelete) return;
+
+      // Realiza la solicitud DELETE al backend
+      const response = await axios.delete(`${API_URL}/eventos/${ident}`);
+      console.log('Evento eliminado:', response.data);
+
+      // Cerrar modal o redirigir
+      onClose(); // Llama a la función onClose para cerrar el modal
+
+      // Opcional: notificar al usuario
+      alert('Evento eliminado exitosamente');
+    } catch (error) {
+      console.error('Error al eliminar el evento:', error);
+      alert('Hubo un error al eliminar el evento');
+    }
+  };
+
   const departamentos = [
     "La Paz", "Oruro", "Potosí", "Santa Cruz", "Beni", "Pando", "Tarija", "Cochabamba", "Tariza", "Chuquisaca"
   ];
@@ -110,7 +131,7 @@ const EdicionEventos: React.FC<FixedCenterBoxProps> = ({ ident, onClose }) => {
       setTitulo(eventoDat.titulo);
       setDescripcion(eventoDat.descripcion);
       const fechaIniFormateada = new Date(eventoDat.fecha_inicio).toISOString().slice(0, 16);
-      
+
       setFechaInicio(fechaIniFormateada);
       setCapacidad(eventoDat.capacidad);
       setUbicacion(eventoDat.ubicacion);
@@ -125,34 +146,37 @@ const EdicionEventos: React.FC<FixedCenterBoxProps> = ({ ident, onClose }) => {
   }, [eventoDat, patrocinadoresEv]);
 
 
+
   if (!eventoDat) return <p>Cargando evento...</p>;
+
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     try {
       const datosActualizados = {
         titulo,
         descripcion,
-        fecha_inicio:fechaInicio,
+        fecha_inicio: fechaInicio,
         capacidad,
         ubicacion,
         departamento,
-        categoria_id:categoria,
-        estado_id:estado,
+        categoria_id: categoria,
+        estado_id: estado,
         expositor,
         patrocinadores: patrocinadoresSeleccionados, // array de IDs
       };
-  
+
       // Suponiendo que `eventoId` es el ID del evento que estás editando
       await axios.put(`${API_URL}/createEvent/${ident}`, datosActualizados);
-  
+
       // Opcional: notificación, recarga o feedback
       console.log('Evento actualizado con éxito');
-  
+
       // Cerrar modal o redirigir
       onClose();
-  
+
     } catch (error) {
       console.error('Error al actualizar el evento:', error);
       // Manejo de error en UI si es necesario
@@ -365,6 +389,9 @@ const EdicionEventos: React.FC<FixedCenterBoxProps> = ({ ident, onClose }) => {
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
                   <Button variant="contained" color="primary" type="submit">
                     Guardar Cambios
+                  </Button>
+                  <Button variant="contained" color="primary" onClick={handleDelete}>
+                    Eliminar
                   </Button>
                   <Button variant="outlined" color="secondary" onClick={onClose}>
                     Cancelar
